@@ -419,7 +419,7 @@ class VarbaseUpdate {
 
       $repos["composer-patches"] = [
         "type" => "vcs",
-        "url" => "https://github.com/waleedq/composer-patches"
+        "url" => "https://github.com/vardot/composer-patches"
       ];
 
 
