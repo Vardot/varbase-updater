@@ -189,6 +189,12 @@ class VarbaseUpdate {
 
   public static function handlePackagePatchError(PatchEvent $event) {
     $logPath = VarbaseUpdate::getDrupalRoot(getcwd(), "");
+
+    $io = $event->getIO();
+    $composer = $event->getComposer();
+    $rootPackage = $event->getComposer()->getPackage();
+    $rootPackageExtras = $rootPackage->getExtra();
+
     $package = $event->getPackage();
     $manager = $event->getComposer()->getInstallationManager();
     $installPath = $manager->getInstaller($package->getType())->getInstallPath($package);
@@ -239,7 +245,95 @@ class VarbaseUpdate {
       }
     }
 
-    self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+    if($isApplied){
+
+      $io->write([
+          "<warning>Patch: " . $event->getUrl() . "</warning>",
+          "<warning>\t" . $event->getDescription() . "</warning>",
+          "<warning>\tIs already applied on  " . $package->getName() . " " . $package->getFullPrettyVersion() . "</warning>"
+        ]
+      );
+
+      $answer = $io->ask("<info>Would you like to remove it form patches list ? (yes)</info>", "yes");
+
+      if(preg_match("/yes/i", $answer)){
+        $io->write("<info>Removing Patch: " . $event->getUrl() . "</info>", true);
+        $patches = [];
+        $patchesFile = "";
+        if (isset($rootPackageExtras['patches'])) {
+          $io->write('<info>Removing patch from root package.</info>');
+          $patches = $rootPackageExtras['patches'];
+        } elseif (isset($rootPackageExtras['patches-file'])) {
+          $io->write('<info>Removing patch from patches file. ' . $rootPackageExtras['patches-file'] . '.</info>');
+          $patchesFile = file_get_contents($rootPackageExtras['patches-file']);
+          $patchesFile = json_decode($patchesFile, TRUE);
+          $error = json_last_error();
+          if ($error != 0) {
+            $io->write('<error>There was an error reading patches file.</error>');
+          }
+
+          if (isset($patchesFile['patches'])) {
+            $patches = $patchesFile['patches'];
+          }
+        }else{
+          //shouldn't reach here!
+          $io->write('<warning>Hmmm, no patches supplied!</warning>');
+        }
+
+        $found = false;
+        if(isset($patches[$package->getName()])){
+          foreach($patches[$package->getName()] as $key => $url){
+            if($url == $event->getUrl()){
+              $found = true;
+              unset($patches[$package->getName()][$key]);
+            }
+          }
+          if(!sizeof($patches[$package->getName()])){
+            unset($patches[$package->getName()]);
+          }
+        }
+
+        if($found){
+          $io->write('<info>Saving changes.</info>');
+          if (isset($rootPackageExtras['patches'])) {
+            $rootPackageExtras['patches'] = $patches;
+            $rootPackage->setExtra($rootPackageExtras);
+            $dumper = new ArrayDumper();
+            $json = $dumper->dump($rootPackage);
+            $json["prefer-stable"] = true;
+            $json = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+            $rootFile = VarbaseUpdate::getDrupalRoot(getcwd(), "") . "composer.json";
+            if(file_put_contents($rootFile, $json)){
+              $io->write('<info>Root package is saved successfully.</info>');
+            }else{
+              $io->write('<error>Couldn\'t save root package.</error>');
+              self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+            }
+          } elseif ($rootPackageExtras['patches-file']) {
+            $patchesFile["patches"] = $patches;
+            $patchesFile = json_encode($patchesFile, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+            if(file_put_contents($rootPackageExtras['patches-file'], $patchesFile)){
+              $io->write('<info>Patches file is saved successfully.</info>');
+            }else{
+              $io->write('<error>Couldn\'t save patches file.</error>');
+              self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+            }
+          } else {
+            //shouldn't reach here!
+            $io->write("<warning>Can't save, no patches supplied!</warning>");
+            self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+          }
+        }else{
+          $io->write("<warning>Couldn't find the patch inside root composer.json or patches file, probably it's provided from dependencies. </warning>", true);
+          $io->write("<warning>Logging patch instead of removing.</warning>", true);
+          self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+        }
+      }else{
+        self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+      }
+    }else{
+        self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+    }
   }
 
   public static function handlePackagePatchTags(PatchEvent $event) {
