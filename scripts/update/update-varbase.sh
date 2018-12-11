@@ -80,12 +80,21 @@ revert_backup () {
 
 exit_and_revert(){
   clear_stdin;
-  echo "$(tput setaf 1)Would you like to abort the update process and restore the backup? (no): $(tput sgr 0)";
+  if [ -d ${BASEDIR}/update_backups ]; then
+    echo "$(tput setaf 1)Would you like to abort the update process and restore the backup? (no): $(tput sgr 0)";
+  else
+    echo "$(tput setaf 1)Would you like to abort the update process? (no): $(tput sgr 0)";
+  fi
   read answer </dev/tty;
   if [ "$answer" != "${answer#[Yy]}" ] ;then
-    echo -e "$(tput setab 1)$(tput setaf 7)Going back in time and restoring the snapshot before the update process!$(tput sgr 0)";
-    revert_backup;
-    exit;
+    if [ -d ${BASEDIR}/update_backups ]; then
+      echo -e "$(tput setab 1)$(tput setaf 7)Going back in time and restoring the snapshot before the update process!$(tput sgr 0)";
+      revert_backup;
+      exit;
+    else
+      echo -e "$(tput setab 1)$(tput setaf 7)Mission aborted.$(tput sgr 0)";
+      exit;
+    fi
   fi
 }
 
@@ -191,8 +200,21 @@ elif [ "$answer" != "${answer#[Rr]}" ] ; then
 elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   touch ${ERRORLOG};
   echo > ${ERRORLOG};
-  echo -e "$(tput setaf 2)Preparing a backup snapshot before performing updates...$(tput sgr 0)";
-  backup;
+
+  clear_stdin;
+  echo -e "$(tput setaf 1)Do you want to create a backup snapshot before starting the update process? (yes): $(tput sgr 0)";
+  read answer;
+  answer=${answer:-Yes}
+  if [ "$answer" != "${answer#[Yy]}" ] ;then
+    echo -e "$(tput setaf 2)Preparing a backup snapshot before performing updates...$(tput sgr 0)";
+    backup;
+  else
+    if [ -d ${BASEDIR}/update_backups ]; then
+      rm -rf ${BASEDIR}/update_backups;
+    fi
+    echo -e "$(tput setaf 2)Backup snapshot skipped...$(tput sgr 0)";
+  fi
+
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)";
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)" >> ${ERRORLOG};
   cleanup;
@@ -218,8 +240,10 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
       exit_and_revert;
   fi
 
-  echo -e "$(tput setaf 2)Creating a log of all failed patches, please check failed-patches.txt after the update process finishes...$(tput sgr 0)";
-  grep -i "Could not apply patch! Skipping" ${BASEDIR}/.update-error-log > failed-patches.txt
+  if [ -f ${BASEDIR}/failed-patches.txt ]; then
+    echo -e "$(tput setaf 2)Log of all failed patches has been created, please check failed-patches.txt after the update process finishes...$(tput sgr 0)";
+  fi
+
   copy_after_update;
   cd ${BASEDIR}/${DRUPALPATH};
   $DRUSH cr --strict=0 1> >(tee -a ${ERRORLOG} >&1) 2> >(tee -a ${ERRORLOG} >&2);
