@@ -514,13 +514,17 @@ class VarbaseUpdate {
           if(isset($conf["packages"]["crucial"])){
             $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
           }
+          $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
           if(isset($conf["enable-after-update"])){
-            $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
-            file_put_contents($enableAfterUpdatePath, implode("\n", $conf["enable-after-update"]));
+            file_put_contents($enableAfterUpdatePath, implode(PHP_EOL, $conf["enable-after-update"]));
+          }else{
+            file_put_contents($enableAfterUpdatePath, "");
           }
+          $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
           if(isset($conf["skip"])){
-            $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
-            file_put_contents($skipUpdatePath, implode("\n", $conf["skip"]));
+            file_put_contents($skipUpdatePath, implode(PHP_EOL, $conf["skip"]));
+          }else{
+            file_put_contents($skipUpdatePath, "");
           }
           if(isset($conf["scripts"])){
             $scripts = array_replace_recursive($scripts, $conf["scripts"]);
@@ -538,11 +542,11 @@ class VarbaseUpdate {
         }
         if(isset($conf["enable-after-update"])){
           $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
-          file_put_contents($enableAfterUpdatePath, implode("\n", $conf["enable-after-update"]));
+          file_put_contents($enableAfterUpdatePath, implode(PHP_EOL, $conf["enable-after-update"]));
         }
         if(isset($conf["skip"])){
           $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
-          file_put_contents($skipUpdatePath, implode("\n", $conf["skip"]));
+          file_put_contents($skipUpdatePath, implode(PHP_EOL, $conf["skip"]));
         }
         if(isset($conf["scripts"])){
           $scripts = array_replace_recursive($scripts, $conf["scripts"]);
