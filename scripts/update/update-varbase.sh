@@ -212,9 +212,6 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
     echo -e "$(tput setaf 2)Preparing a backup snapshot before performing updates...$(tput sgr 0)";
     backup;
   else
-    if [ -d ${BASEDIR}/update_backups ]; then
-      rm -rf ${BASEDIR}/update_backups;
-    fi
     echo -e "$(tput setaf 2)Backup snapshot skipped...$(tput sgr 0)";
   fi
 
