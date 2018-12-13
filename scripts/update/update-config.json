@@ -27,6 +27,10 @@
         "drupal/page_manager": "4.0-beta3"
       }
     },
+    "skip":[
+      "media_entity_document",
+      "media_entity_image"
+    ],
     "scripts": {
       "post-drupal-scaffold-cmd":[
         "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"

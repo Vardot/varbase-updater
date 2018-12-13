@@ -516,13 +516,21 @@ class VarbaseUpdate {
           }
           $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
           if(isset($conf["enable-after-update"])){
-            file_put_contents($enableAfterUpdatePath, implode(PHP_EOL, $conf["enable-after-update"]));
+            $output = "";
+            foreach ($conf["enable-after-update"] as $key => $value) {
+              $output .= $value . PHP_EOL;
+            }
+            file_put_contents($enableAfterUpdatePath, $output);
           }else{
             file_put_contents($enableAfterUpdatePath, "");
           }
           $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
           if(isset($conf["skip"])){
-            file_put_contents($skipUpdatePath, implode(PHP_EOL, $conf["skip"]));
+            $output = "";
+            foreach ($conf["skip"] as $key => $value) {
+              $output .= $value . PHP_EOL;
+            }
+            file_put_contents($skipUpdatePath, $output);
           }else{
             file_put_contents($skipUpdatePath, "");
           }
@@ -541,12 +549,20 @@ class VarbaseUpdate {
           $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
         }
         if(isset($conf["enable-after-update"])){
+          $output = "";
+          foreach ($conf["enable-after-update"] as $key => $value) {
+            $output .= $value . PHP_EOL;
+          }
           $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
-          file_put_contents($enableAfterUpdatePath, implode(PHP_EOL, $conf["enable-after-update"]));
+          file_put_contents($enableAfterUpdatePath, $output);
         }
         if(isset($conf["skip"])){
+          $output = "";
+          foreach ($conf["skip"] as $key => $value) {
+            $output .= $value . PHP_EOL;
+          }
           $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
-          file_put_contents($skipUpdatePath, implode(PHP_EOL, $conf["skip"]));
+          file_put_contents($skipUpdatePath, $output);
         }
         if(isset($conf["scripts"])){
           $scripts = array_replace_recursive($scripts, $conf["scripts"]);

@@ -45,15 +45,19 @@ backup () {
       cd ${BASEDIR};
       exit;
   fi
-  mkdir -p ${BASEDIR}/update_backups/skip
+  cd ${BASEDIR};
+}
+
+
+backup_skipped_modules () {
   if [ -f ${BASEDIR}/scripts/update/.skip-update ]; then
+    mkdir -p ${BASEDIR}/update_backups/skip
     while read p; do
       if [ -d "${BASEDIR}/${DRUPALPATH}/modules/contrib/${p}" ]; then
         cp -r ${BASEDIR}/${DRUPALPATH}/modules/contrib/${p} ${BASEDIR}/update_backups/skip/;
       fi
     done < ${BASEDIR}/scripts/update/.skip-update
   fi
-  cd ${BASEDIR};
 }
 
 revert_backup () {
@@ -213,6 +217,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
     backup;
   else
     echo -e "$(tput setaf 2)Backup snapshot skipped...$(tput sgr 0)";
+    rm -rf ${BASEDIR}/update_backups;
   fi
 
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)";
@@ -226,6 +231,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
       echo -e "$(tput setaf 2)wget -O - -q https://raw.githubusercontent.com/Vardot/varbase-updater/master/scripts/update/update.php | php$(tput sgr 0)";
       exit_and_revert;
   fi
+  backup_skipped_modules;
   mv ${BASEDIR}/composer.new.json ${BASEDIR}/composer.json;
   clear_stdin;
   echo "$(tput setaf 4)composer.json has been updated. Now is your chance to perform any manual changes. Please do your changes (if any) then press enter to continue... $(tput sgr 0)";
