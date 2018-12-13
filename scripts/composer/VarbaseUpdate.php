@@ -426,6 +426,9 @@ class VarbaseUpdate {
     $merged = $array1;
     foreach ($array2 as $key => &$value) {
         $newKey = preg_replace('/{\$drupalPath}/', $drupalPath, $key);
+        if(!isset($merged[$newKey])){
+          $merged[$newKey] = [];
+        }
         if (is_array($value) && isset($merged[$newKey]) && is_array($merged[$newKey])) {
             $merged[$newKey] = self::array_merge_recursive_distinct($merged[$newKey], $value, $drupalPath);
         } else {
@@ -599,7 +602,6 @@ class VarbaseUpdate {
         }
       }
     }
-
 
     foreach (glob($paths['contribThemesPath'] . "*/composer.json") as $file) {
       $pluginConfig = JsonFile::parseJson(file_get_contents($file), $file);

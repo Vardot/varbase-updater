@@ -117,6 +117,9 @@ cleanup(){
   if [ -f ${BASEDIR}/scripts/composer/ScriptHandler.php ]; then
     rm -rf ${BASEDIR}/scripts/composer/ScriptHandler.php;
   fi
+  if [ -f ${BASEDIR}/scripts/update/.download-before-update ]; then
+    rm -rf ${BASEDIR}/scripts/update/.download-before-update;
+  fi
   composer dump-autoload;
 }
 
@@ -223,7 +226,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   if [ "$result" -ne 0 ]; then
       echo -e "$(tput setab 1)$(tput setaf 7)There was and error while preparing composer.json for Varbase updates. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       echo -e "$(tput setab 1)$(tput setaf 7)If you are running Varbase 8.x-4.x or 8.x-5.x version, make sure to update varbase-project using the update command: $(tput sgr 0)";
-      echo -e "$(tput setaf 2)wget -O - -q https://raw.githubusercontent.com/Vardot/varbase-project/8.6.x-update/scripts/update/update.php | php$(tput sgr 0)";
+      echo -e "$(tput setaf 2)wget -O - -q https://raw.githubusercontent.com/Vardot/varbase-updater/master/scripts/update/update.php | php$(tput sgr 0)";
       exit_and_revert;
   fi
   mv ${BASEDIR}/composer.new.json ${BASEDIR}/composer.json;
@@ -263,6 +266,13 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   if [ "$result" -ne 0 ]; then
       echo -e "$(tput setab 1)$(tput setaf 7)There was and error while updating Drupal core. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       exit_and_revert;
+  fi
+
+  if [ -f ${BASEDIR}/scripts/update/.skip-update ]; then
+    rm -rf ${BASEDIR}/scripts/update/.skip-update;
+  fi
+  if [ -f ${BASEDIR}/scripts/update/.enable-after-update ]; then
+    rm -rf ${BASEDIR}/scripts/update/.enable-after-update;
   fi
 
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)";
