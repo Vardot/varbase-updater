@@ -52,7 +52,7 @@
         "type": "vcs",
         "url": "https://github.com/vardot/composer-patches"
       },
-      "packagist.org": {
+      "assets": {
         "type": "composer",
         "url": "https://asset-packagist.org"
       }
