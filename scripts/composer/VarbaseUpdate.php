@@ -422,8 +422,39 @@ class VarbaseUpdate {
     }
   }
 
+  public static function array_merge_recursive_distinct(array &$array1, array &$array2, $drupalPath){
+    $merged = $array1;
+    foreach ($array2 as $key => &$value) {
+        $newKey = preg_replace('/{\$drupalPath}/', $drupalPath, $key);
+        if (is_array($value) && isset($merged[$newKey]) && is_array($merged[$newKey])) {
+            $merged[$newKey] = self::array_merge_recursive_distinct($merged[$newKey], $value, $drupalPath);
+        } else {
+            $newValue = preg_replace('/{\$drupalPath}/', $drupalPath, $value);
+            $merged[$newKey] = $newValue;
+        }
+    }
+    return $merged;
+  }
+
   public static function generate(Event $event) {
     $paths = VarbaseUpdate::getPaths($event->getComposer()->getPackage());
+
+    $updateConfigPath = $paths["composerPath"] . "scripts/update/update-config.json";
+    $extraConfig = [];
+    if(file_exists($paths["composerPath"] . "update-config.json")){
+      $extraConfig = json_decode(file_get_contents($paths["composerPath"] . "update-config.json"), TRUE);
+    }
+    $updateConfig = json_decode(file_get_contents($updateConfigPath), TRUE);
+    $error = json_last_error();
+    $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
+
+    if(!isset($updateConfig['profile']) || !isset($updateConfig['package'])){
+      $dumper = new ArrayDumper();
+      $json = $dumper->dump($projectPackage);
+      $projectConfig = JsonFile::encode($json);
+      print_r($projectConfig);
+      return;
+    }
 
     $composer = $event->getComposer();
     $projectPackage = $event->getComposer()->getPackage();
@@ -438,144 +469,112 @@ class VarbaseUpdate {
     }
 
     $loader = new JsonLoader(new ArrayLoader());
-    $varbaseConfigPath = $paths['profilesPath'] . "varbase/composer.json";
-    $varbaseConfig = JsonFile::parseJson(file_get_contents($varbaseConfigPath), $varbaseConfigPath);
-    $varbaseVersion = $projectPackageRequires["vardot/varbase"]->getPrettyConstraint();
+    $profileConfigPath = $paths['profilesPath'] . $updateConfig['profile'] . "/composer.json";
+    $profileConfig = JsonFile::parseJson(file_get_contents($profileConfigPath), $profileConfigPath);
+    $profileVersion = $projectPackageRequires[$updateConfig['package']]->getPrettyConstraint();
 
-    if(!isset($varbaseConfig['version'])){
-      $varbaseConfig['version'] = "0.0.0"; //dummy version just to handle UnexpectedValueException
+    if(!isset($profileConfig['version'])){
+      $profileConfig['version'] = "0.0.0"; //dummy version just to handle UnexpectedValueException
     }
 
-    $varbaseConfig = JsonFile::encode($varbaseConfig);
-    $varbasePackage = $loader->load($varbaseConfig);
+    $profileConfig = JsonFile::encode($profileConfig);
+    $profilePackage = $loader->load($profileConfig);
 
     $io = $event->getIO();
 
-    $varbasePackageRequires = $varbasePackage->getRequires();
+    $profilePackageRequires = $profilePackage->getRequires();
 
-    $varbaseLink = $projectPackageRequires["vardot/varbase"];
+    $profileLink = $projectPackageRequires[$updateConfig['package']];
     $requiredPackages = [];
     $crucialPackages = [];
-    $requiredPackageLinks = ["vardot/varbase" => $varbaseLink];
+    $requiredPackageLinks = [];
+    $requiredPackageLinks[$updateConfig['package']] = $profileLink;
     $extras = [];
     $repos = [];
-    $sripts = [];
+    $scripts = [];
 
 
-    if(preg_match('/8\.4/', $varbaseVersion) || preg_match('/8\.5/', $varbaseVersion)){
-      $crucialPackages["drupal/page_manager"] = ["name"=> "drupal/page_manager", "version" => "4.0-beta3"];
-      if(preg_match('/8\.4\.28/', $varbaseVersion) || preg_match('/8\.5/', $varbaseVersion)){
-        $varbaseLinkConstraint = new Constraint(">=", "8.6.2");
-        $varbaseLinkConstraint->setPrettyString("~8.6.2");
-        $varbaseLink = new Link("vardot/varbase-project", "vardot/varbase", $varbaseLinkConstraint , "", "~8.6.2");
-        $requiredPackageLinks = ["vardot/varbase" => $varbaseLink];
+    foreach ($updateConfig as $key => $conf) {
+      if (isset($conf["from"]) && isset($conf["to"])) {
+        $conf["from"] = preg_replace("/\*/", ".*", $conf["from"]);
+        $conf["to"] = preg_replace("/\*/", ".*", $conf["to"]);
+        if(preg_match('/' . $conf['to'] . '/', $profileVersion)){
+          continue;
+        }
+        if(preg_match('/' . $conf["from"] . '/', $profileVersion)){
+          $profileLinkConstraint = new Constraint(">=", $conf["to"]);
+          $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
+          $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to"]);
+          $requiredPackageLinks = [];
+          $requiredPackageLinks[$updateConfig['package']] = $profileLink;
 
-        $crucialPackages["drupal/varbase_carousels"] = ["name"=> "drupal/varbase_carousels", "version" => "6.0"];
-        $crucialPackages["drupal/entity_browser"] = ["name"=> "drupal/entity_browser", "version" => "2.0"];
-        $crucialPackages["drupal/video_embed_media"] = ["name"=> "drupal/video_embed_field", "version" => "2.0"];
-        $crucialPackages["drupal/media_entity"] = ["name"=> "drupal/media_entity", "version" => "2.0-beta3"];
-        $crucialPackages["drupal/panelizer"] = ["name"=> "drupal/panelizer", "version" => "4.1"];
-
-        $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
-        file_put_contents($enableAfterUpdatePath, "entity_browser_generic_embed".PHP_EOL);
-      }else{
-        $varbaseLinkConstraint = new Constraint("=", "8.4.28");
-        $varbaseLinkConstraint->setPrettyString("8.4.28");
-        $varbaseLink = new Link("vardot/varbase-project", "vardot/varbase", $varbaseLinkConstraint , "", "8.4.28");
-        $requiredPackageLinks = ["vardot/varbase" => $varbaseLink];
-
-        $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
-        file_put_contents($enableAfterUpdatePath, "");
+          if(isset($conf["packages"]["crucial"])){
+            $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
+          }
+          if(isset($conf["enable-after-update"])){
+            $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
+            file_put_contents($enableAfterUpdatePath, implode("\n", $conf["enable-after-update"]));
+          }
+          if(isset($conf["skip"])){
+            $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
+            file_put_contents($skipUpdatePath, implode("\n", $conf["skip"]));
+          }
+          if(isset($conf["scripts"])){
+            $scripts = array_replace_recursive($scripts, $conf["scripts"]);
+          }
+          if(isset($conf["repos"])){
+            $repos = array_replace_recursive($repos, $conf["repos"]);
+          }
+          if(isset($conf["extras"])){
+            $extras = array_replace_recursive($extras, $conf["extras"]);
+          }
+        }
+      } elseif ($key == "all"){
+        if(isset($conf["packages"]["crucial"])){
+          $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
+        }
+        if(isset($conf["enable-after-update"])){
+          $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
+          file_put_contents($enableAfterUpdatePath, implode("\n", $conf["enable-after-update"]));
+        }
+        if(isset($conf["skip"])){
+          $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
+          file_put_contents($skipUpdatePath, implode("\n", $conf["skip"]));
+        }
+        if(isset($conf["scripts"])){
+          $scripts = array_replace_recursive($scripts, $conf["scripts"]);
+        }
+        if(isset($conf["repos"])){
+          $repos = array_replace_recursive($repos, $conf["repos"]);
+        }
+        if(isset($conf["extras"])){
+          $extras = array_replace_recursive($extras, $conf["extras"]);
+        }
       }
-
-      $sripts = [
-        "varbase-handle-tags" => [
-            "Varbase\\composer\\VarbaseUpdate::handleTags"
-        ],
-        "pre-patch-apply" => [
-            "Varbase\\composer\\VarbaseUpdate::handlePackagePatchTags"
-        ],
-        "post-package-update" => [
-            "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
-        ],
-        "post-package-install" => [
-            "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
-        ],
-        "patch-apply-error" => [
-            "Varbase\\composer\\VarbaseUpdate::handlePackagePatchError"
-        ]
-      ];
-
-      $repos["assets"] = [
-        "type" => "composer",
-        "url" => "https://asset-packagist.org"
-      ];
-
-      $repos["composer-patches"] = [
-        "type" => "vcs",
-        "url" => "https://github.com/vardot/composer-patches"
-      ];
-
-
-      $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'] = ["type:bower-asset", "type:npm-asset"];
-      $extras["installer-paths"][$paths["rootPath"]."/libraries/slick"] = ["npm-asset/slick-carousel"];
-      $extras["installer-paths"][$paths["rootPath"]."/libraries/ace"] = ["npm-asset/ace-builds"];
-      $extras["installer-types"] = [
-        "bower-asset",
-        "npm-asset"
-      ];
-
-      $extras["varbase-update"] = [
-        "generated" => true
-      ];
-      $extras["drupal-libraries"] = [
-        "library-directory" => $paths["rootPath"]."/libraries",
-        "libraries" => [
-            [
-                "name" => "dropzone",
-                "package" => "npm-asset/dropzone"
-            ],
-            [
-                "name" => "blazy",
-                "package" => "npm-asset/blazy"
-            ],
-            [
-                "name" => "slick",
-                "package" => "npm-asset/slick-carousel"
-            ],
-            [
-                "name" => "ace",
-                "package" => "npm-asset/ace-builds"
-            ]
-        ]
-      ];
     }
-
 
     foreach (glob($paths['contribModulesPath'] . "*/*.info.yml") as $file) {
       $yaml = Yaml::parse(file_get_contents($file));
-      if(isset($yaml["project"]) && isset($yaml["version"]) && $yaml["project"] != "varbase"){
+      if(isset($yaml["project"]) && isset($yaml["version"]) && $yaml["project"] != $updateConfig['profile']){
         $composerRepo = "drupal";
         $composerName = $composerRepo . "/" . $yaml["project"];
         $composerVersion = str_replace("8.x-", "", $yaml["version"]);
 
         if(isset($projectPackagePatches[$composerName])){
           $requiredPackages[$composerName] = ["name"=> $composerName, "version" => $composerVersion, "patch" => true];
-        }else if(!isset($varbasePackageRequires[$composerName])){
+        }else if(!isset($profilePackageRequires[$composerName])){
           $requiredPackages[$composerName] = ["name"=> $composerName, "version" => $composerVersion];
         }
       }
     }
 
-
-
     foreach (glob($paths['contribThemesPath'] . "*/*.info.yml") as $file) {
       $yaml = Yaml::parse(file_get_contents($file));
-      if(isset($yaml["project"]) && isset($yaml["version"]) && $yaml["project"] != "varbase"){
+      if(isset($yaml["project"]) && isset($yaml["version"]) && $yaml["project"] != $updateConfig['profile']){
         $composerRepo = "drupal";
         $composerName = $composerRepo . "/" . $yaml["project"];
         $composerVersion = str_replace("8.x-", "", $yaml["version"]);
-        if(!isset($varbasePackageRequires[$composerName])){
+        if(!isset($profilePackageRequires[$composerName])){
           $requiredPackages[$composerName] = ["name"=> $composerName, "version" => $composerVersion];
         }
       }
@@ -622,47 +621,33 @@ class VarbaseUpdate {
       if(isset($projectPackageRequires[$name])){
         $requiredPackageLinks[] = $projectPackageRequires[$name];
       }else{
-        $link = new Link("vardot/varbase-project", $package["name"], new Constraint(">=", $package["version"]), "", "^".$package["version"]);
+        $link = new Link($projectPackage->getName(), $package["name"], new Constraint(">=", $package["version"]), "", "^".$package["version"]);
         $requiredPackageLinks[$name] = $link;
       }
     }
 
-
-    foreach ($crucialPackages as $name => $package) {
-      $link = new Link("vardot/varbase-project", $package["name"], new Constraint("==", $package["version"]), "", $package["version"]);
-      $requiredPackageLinks[$name] = $link;
+    foreach ($crucialPackages as $key => $version) {
+      $link = new Link($projectPackage->getName(), $key, new Constraint("==", $version), "", $version);
+      $requiredPackageLinks[$key] = $link;
     }
 
     foreach ($projectPackageRequires as $projectName => $projectPackageLink) {
-      if(!isset($varbasePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
+      if(!isset($profilePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
         $requiredPackageLinks[] = $projectPackageLink;
       }
     }
-
 
     if(!$projectPackageExtras){
       $projectPackageExtras = [];
     }
 
-    $mergedExtras = $projectPackageExtras;
-    if(!isset($projectPackageExtras["varbase-update"]["generated"])){
-      $mergedExtras = array_merge_recursive($projectPackageExtras, $extras);
-    }
-
-
-    $mergedRepos = $projectPackageRepos;
-    if(!isset($projectPackageExtras["varbase-update"]["generated"])){
-      $mergedRepos = array_merge_recursive($projectPackageRepos, $repos);
-    }
-
-    $mergedScripts = $projectScripts;
-    if(!isset($projectPackageExtras["varbase-update"]["generated"])){
-      $mergedScripts = array_merge_recursive($projectScripts, $sripts);
-    }
+    $mergedExtras = self::array_merge_recursive_distinct($projectPackageExtras, $extras, $paths["rootPath"]);
+    $mergedRepos = self::array_merge_recursive_distinct($projectPackageRepos, $repos, $paths["rootPath"]);
+    $mergedScripts = self::array_merge_recursive_distinct($projectScripts, $scripts, $paths["rootPath"]);
 
     //Make sure to run the Varbase postDrupalScaffoldProcedure insetad of the current project postDrupalScaffoldProcedure
     if(isset($mergedScripts["post-drupal-scaffold-cmd"])){
-      $mergedScripts["post-drupal-scaffold-cmd"]=["Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"];
+      //$mergedScripts["post-drupal-scaffold-cmd"]=["Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"];
     }
 
     $projectPackage->setExtra($mergedExtras);

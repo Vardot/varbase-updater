@@ -1,0 +1,93 @@
+{
+  "profile": "varbase",
+  "package": "vardot/varbase",
+  "8.4.*": {
+    "from": "8.4.*",
+    "to": "8.4.28"
+  },
+  "8.4.28": {
+    "from": "8.4.28",
+    "to": "8.6.2",
+    "packages": {
+      "crucial": {
+        "drupal/varbase_carousels": "6.0",
+        "drupal/entity_browser": "2.0",
+        "drupal/video_embed_field": "2.0",
+        "drupal/media_entity": "2.0-beta3",
+        "drupal/panelizer": "4.1"
+      }
+    },
+    "enable-after-update":[
+      "entity_browser_generic_embed"
+    ]
+  },
+  "all": {
+    "packages": {
+      "crucial": {
+        "drupal/page_manager": "4.0-beta3"
+      }
+    },
+    "scripts": {
+      "post-drupal-scaffold-cmd":[
+        "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"
+      ],
+      "varbase-handle-tags": [
+          "Varbase\\composer\\VarbaseUpdate::handleTags"
+      ],
+      "pre-patch-apply": [
+          "Varbase\\composer\\VarbaseUpdate::handlePackagePatchTags"
+      ],
+      "post-package-update": [
+          "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
+      ],
+      "post-package-install": [
+          "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
+      ],
+      "patch-apply-error": [
+          "Varbase\\composer\\VarbaseUpdate::handlePackagePatchError"
+      ]
+    },
+    "repos": {
+      "composer-patches": {
+        "type": "vcs",
+        "url": "https://github.com/vardot/composer-patches"
+      },
+      "packagist.org": {
+        "type": "composer",
+        "url": "https://asset-packagist.org"
+      }
+    },
+    "extras": {
+      "installer-paths": {
+        "{$drupalPath}/libraries/{$name}": ["type:bower-asset", "type:npm-asset"],
+        "{$drupalPath}/libraries/slick": ["npm-asset/slick-carousel"],
+        "{$drupalPath}/libraries/ace": ["npm-asset/ace-builds"]
+      },
+      "installer-types": [
+        "bower-asset",
+        "npm-asset"
+      ],
+      "drupal-libraries": {
+        "library-directory": "{$drupalPath}/libraries",
+        "libraries": [
+            {
+                "name": "dropzone",
+                "package": "npm-asset/dropzone"
+            },
+            {
+                "name": "blazy",
+                "package": "npm-asset/blazy"
+            },
+            {
+                "name": "slick",
+                "package": "npm-asset/slick-carousel"
+            },
+            {
+                "name": "ace",
+                "package": "npm-asset/ace-builds"
+            }
+        ]
+      }
+    }
+  }
+}

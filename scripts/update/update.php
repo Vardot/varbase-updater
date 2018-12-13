@@ -113,6 +113,7 @@ $base_path = "https://raw.githubusercontent.com/Vardot/varbase-updater/master/";
 get_file($base_path . "scripts/composer/VarbaseUpdate.php", getcwd().'/scripts/composer/', 'VarbaseUpdate.php');
 get_file($base_path . "scripts/update/update-varbase.sh", getcwd().'/scripts/update/', 'update-varbase.sh');
 get_file($base_path . "scripts/update/version-check.php", getcwd().'/scripts/update/', 'version-check.php');
+get_file($base_path . "scripts/update/update-config.json", getcwd().'/scripts/update/', 'update-config.json');
 //only download them if they don't exist
 if (!file_exists(getcwd().'/scripts/update/tags.json')) {
     get_file($base_path . "scripts/update/tags.json", getcwd().'/scripts/update/', 'tags.json');
@@ -122,15 +123,6 @@ if (!file_exists(getcwd().'/drush/policy.drush.inc')) {
 }
 if (!file_exists(getcwd().'/drush/README.md')) {
     get_file($base_path . "drush/README.md", getcwd().'/drush/', 'README.md');
-}
-if (!file_exists(getcwd().'/scripts/update/.download-before-update')) {
-  get_file($base_path . "scripts/update/.download-before-update", getcwd().'/scripts/update/', '.download-before-update');
-}
-if (!file_exists(getcwd().'/scripts/update/.enable-after-update')) {
-  get_file($base_path . "scripts/update/.enable-after-update", getcwd().'/scripts/update/', '.enable-after-update');
-}
-if (!file_exists(getcwd().'/scripts/update/.skip-update')) {
-  get_file($base_path . "scripts/update/.skip-update", getcwd().'/scripts/update/', '.skip-update');
 }
 
 chmod(getcwd().'/scripts/update/update-varbase.sh', 0755);
