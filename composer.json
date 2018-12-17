@@ -13,6 +13,6 @@
   },
   "bin":[
     "scripts/update/update-varbase.sh",
-    "scripts/update/version-check.sh"
+    "scripts/update/version-check.php"
   ]
 }
