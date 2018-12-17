@@ -18,6 +18,7 @@ use Composer\Package\Loader\ArrayLoader;
 use Composer\Package\Dumper\ArrayDumper;
 use Composer\Package\Link;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 use Composer\EventDispatcher\Event;
 use Composer\Json\JsonFile;
@@ -40,13 +41,15 @@ class RefactorComposerCommand extends BaseCommand{
 
   protected function configure()
   {
-      $this->setName('varbase-refactor-composer');
+    $this->setName('varbase-refactor-composer');
+    $this->addArgument('file', InputArgument::REQUIRED, 'Where do you want to save the output');
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
       $output->writeln('Refactoring composer.json');
-      $this->generate();
+      $path = $input->getArgument('file');
+      $this->generate($path);
   }
 
   /**
@@ -137,7 +140,7 @@ class RefactorComposerCommand extends BaseCommand{
     return $merged;
   }
 
-  public function generate() {
+  public function generate($savePath) {
     $composer = $this->getComposer();
     $paths = $this->getPaths($composer->getPackage());
 
@@ -154,7 +157,7 @@ class RefactorComposerCommand extends BaseCommand{
       $dumper = new ArrayDumper();
       $json = $dumper->dump($projectPackage);
       $projectConfig = JsonFile::encode($json);
-      print_r($projectConfig);
+      file_put_contents($savePath, $projectConfig);
       return;
     }
 
@@ -390,6 +393,6 @@ class RefactorComposerCommand extends BaseCommand{
       $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
     }
     $projectConfig = JsonFile::encode($json);
-    print_r($projectConfig);
+    file_put_contents($savePath, $projectConfig);
   }
 }
