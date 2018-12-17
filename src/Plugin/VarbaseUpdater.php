@@ -2,6 +2,8 @@
 
 namespace vardot\Composer\Plugin;
 
+use Composer\Composer;
+use Composer\IO\IOInterface;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
