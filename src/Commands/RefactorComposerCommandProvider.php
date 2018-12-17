@@ -66,7 +66,9 @@ class RefactorComposerCommand extends BaseCommand{
     $paths = [];
     $projectExtras = $package->getExtra();
 
-    $paths["composerPath"] = $this->getDrupalRoot(getcwd(), "../..");
+    $scriptPath = dirname(__FILE__);
+    $paths["composerPath"] = $this->getDrupalRoot(getcwd(), "");
+    $paths["pluginPath"] = $this->getDrupalRoot($scriptPath, "../..");
     $paths["rootPath"] = "docroot";
     if(isset($projectExtras["install-path"])){
       $paths["rootPath"] = $projectExtras["install-path"];
@@ -139,7 +141,7 @@ class RefactorComposerCommand extends BaseCommand{
     $composer = $this->getComposer();
     $paths = $this->getPaths($composer->getPackage());
 
-    $updateConfigPath = $paths["composerPath"] . "config/update-config.json";
+    $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
     $extraConfig = [];
     if(file_exists($paths["composerPath"] . "update-config.json")){
       $extraConfig = json_decode(file_get_contents($paths["composerPath"] . "update-config.json"), TRUE);
@@ -211,7 +213,7 @@ class RefactorComposerCommand extends BaseCommand{
           if(isset($conf["packages"]["crucial"])){
             $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
           }
-          $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
+          $enableAfterUpdatePath = $paths["pluginPath"] . "config/.enable-after-update";
           if(isset($conf["enable-after-update"])){
             $output = "";
             foreach ($conf["enable-after-update"] as $key => $value) {
@@ -221,7 +223,7 @@ class RefactorComposerCommand extends BaseCommand{
           }else{
             file_put_contents($enableAfterUpdatePath, "");
           }
-          $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
+          $skipUpdatePath = $paths["pluginPath"] . "config/.skip-update";
           if(isset($conf["skip"])){
             $output = "";
             foreach ($conf["skip"] as $key => $value) {
@@ -250,7 +252,7 @@ class RefactorComposerCommand extends BaseCommand{
           foreach ($conf["enable-after-update"] as $key => $value) {
             $output .= $value . PHP_EOL;
           }
-          $enableAfterUpdatePath = $paths["composerPath"] . "scripts/update/.enable-after-update";
+          $enableAfterUpdatePath = $paths["pluginPath"] . "config/.enable-after-update";
           file_put_contents($enableAfterUpdatePath, $output);
         }
         if(isset($conf["skip"])){
@@ -258,7 +260,7 @@ class RefactorComposerCommand extends BaseCommand{
           foreach ($conf["skip"] as $key => $value) {
             $output .= $value . PHP_EOL;
           }
-          $skipUpdatePath = $paths["composerPath"] . "scripts/update/.skip-update";
+          $skipUpdatePath = $paths["pluginPath"] . "config/.skip-update";
           file_put_contents($skipUpdatePath, $output);
         }
         if(isset($conf["scripts"])){

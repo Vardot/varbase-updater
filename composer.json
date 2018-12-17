@@ -2,7 +2,8 @@
   "name": "vardot/varbase-updater",
   "type": "composer-plugin",
   "require": {
-      "composer-plugin-api": "^1.1"
+      "composer-plugin-api": "^1.1",
+      "symfony/yaml": "^3.1"
   },
   "extra": {
       "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
