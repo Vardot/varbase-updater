@@ -60,22 +60,21 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
    */
   public static function getSubscribedEvents()
   {
+    $events = array(
+      // to run *after* composer-patches plugin we use 11 as priority.
+      PackageEvents::POST_PACKAGE_INSTALL => array('handlePackageTags', 11),
+      PackageEvents::POST_PACKAGE_UPDATE => array('handlePackageTags', 11)
+    );
+
     if(defined('PatchEvents::PATCH_APPLY_ERROR')){
-      return array(
-        // to run *after* composer-patches plugin we use 11 as priority.
-        PackageEvents::POST_PACKAGE_INSTALL => array('handlePackageTags', 11),
-        PackageEvents::POST_PACKAGE_UPDATE => array('handlePackageTags', 11),
-        PatchEvents::PRE_PATCH_APPLY => array('handlePackagePatchTags', 11),
-        PatchEvents::PATCH_APPLY_ERROR => array('handlePackagePatchError', 11)
-      );
-    }else{
-      return array(
-        // to run *after* composer-patches plugin we use 11 as priority.
-        PackageEvents::POST_PACKAGE_INSTALL => array('handlePackageTags', 11),
-        PackageEvents::POST_PACKAGE_UPDATE => array('handlePackageTags', 11),
-        PatchEvents::PRE_PATCH_APPLY => array('handlePackagePatchTags', 11)
-      );
+      $events[PatchEvents::PATCH_APPLY_ERROR] = array('handlePackagePatchError', 11);
     }
+    if(defined('PatchEvents::PRE_PATCH_APPLY')){
+      $events[PatchEvents::PRE_PATCH_APPLY] = array('handlePackagePatchTags', 11);
+    }
+
+    return $events;
+
   }
 
   /**
