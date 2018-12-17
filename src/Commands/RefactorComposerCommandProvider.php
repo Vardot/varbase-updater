@@ -36,7 +36,7 @@ class RefactorComposerCommandProvider implements CommandProviderCapability
     }
 }
 
-class RefactorComposerCommand implements BaseCommand{
+class RefactorComposerCommand extends BaseCommand{
 
   protected function configure()
   {
