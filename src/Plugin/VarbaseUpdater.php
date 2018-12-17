@@ -109,7 +109,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     $projectExtras = $package->getExtra();
     $scriptPath = dirname(__FILE__);
     $paths["composerPath"] = $this->getDrupalRoot(getcwd(), "");
-    $paths["pluginPath"] = $this->getDrupalRoot($scriptPath, "../..");
+    $paths["pluginPath"] = $this->getDrupalRoot($scriptPath, "../../");
     $paths["rootPath"] = "docroot";
     if(isset($projectExtras["install-path"])){
       $paths["rootPath"] = $projectExtras["install-path"];
