@@ -51,7 +51,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       $this->io = $io;
 
       if(!defined('PatchEvents::PATCH_APPLY_ERROR')){
-        $io->write("<info>Please install composer-patches from vardot repo for catching patch apply errors</info>")
+        $io->write("<info>Please install composer-patches from vardot repo for catching patch apply errors</info>");
       }
   }
 
