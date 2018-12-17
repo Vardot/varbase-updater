@@ -7,6 +7,9 @@
   "extra": {
       "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
   },
+  "autoload": {
+    "psr-4": {"vardot\\Composer\\": "src"}
+  },
   "bin":[
     "scripts/update/update-varbase.sh"
   ]
