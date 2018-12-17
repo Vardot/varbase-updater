@@ -1,6 +1,6 @@
 <?php
 
-namespace vardot\Composer\CommandProvider;
+namespace vardot\Composer\Commands;
 
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +28,7 @@ use Composer\Installer\PackageEvents;
 use Composer\Util\RemoteFilesystem;
 use Composer\Util\ProcessExecutor;
 
-class CommandProvider implements CommandProviderCapability
+class RefactorComposerCommandProvider implements CommandProviderCapability
 {
     public function getCommands()
     {

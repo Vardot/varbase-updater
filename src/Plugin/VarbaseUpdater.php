@@ -86,7 +86,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   public function getCapabilities()
   {
       return array(
-          'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\CommandProvider',
+          'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\Commands\RefactorComposerCommandProvider',
       );
   }
 
