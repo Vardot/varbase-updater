@@ -69,7 +69,7 @@ switch ($argv[1]){
             print "Congratulations! You are on the latest Varbase version now.\n";
           }else{
             print "You are on Varbase (" . $varbaseVersion . "). A newer version (" . $value["toVersion"] . ") is now available.\n";
-            print "Please run: ./scripts/update/update-varbase.sh to update to Varbase (" . $value["toVersion"] . ").\n";
+            print "Please run: ./bin/update-varbase.sh to update to Varbase (" . $value["toVersion"] . ").\n";
           }
         }
       }
