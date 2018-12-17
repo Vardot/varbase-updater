@@ -33,10 +33,7 @@
     ],
     "scripts": {
       "post-drupal-scaffold-cmd":[
-        "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"
-      ],
-      "varbase-handle-tags": [
-          "Varbase\\composer\\VarbaseUpdate::handleTags"
+          "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"
       ],
       "pre-patch-apply": [
           "Varbase\\composer\\VarbaseUpdate::handlePackagePatchTags"

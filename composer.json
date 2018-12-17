@@ -1,0 +1,20 @@
+{
+    "name": "vardot/varbase-updater",
+    "type": "composer-plugin",
+    "require": {
+        "composer-plugin-api": "^1.1",
+        "cweagans/composer-patches": "^1.7",
+    },
+    "extra": {
+        "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
+    },
+    "bin":[
+      "scripts/update/update-varbase.sh"
+    ],
+    "repos": {
+      "composer-patches": {
+        "type": "vcs",
+        "url": "https://github.com/vardot/composer-patches"
+      },
+    },
+}
