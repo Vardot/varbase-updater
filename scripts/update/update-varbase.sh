@@ -50,13 +50,13 @@ backup () {
 
 
 backup_skipped_modules () {
-  if [ -f ${BASEDIR}/scripts/update/.skip-update ]; then
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update ]; then
     mkdir -p ${BASEDIR}/update_backups/skip
     while read p; do
       if [ -d "${BASEDIR}/${DRUPALPATH}/modules/contrib/${p}" ]; then
         cp -r ${BASEDIR}/${DRUPALPATH}/modules/contrib/${p} ${BASEDIR}/update_backups/skip/;
       fi
-    done < ${BASEDIR}/scripts/update/.skip-update
+    done < ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update
   fi
 }
 
@@ -121,14 +121,14 @@ cleanup(){
   if [ -f ${BASEDIR}/scripts/composer/ScriptHandler.php ]; then
     rm -rf ${BASEDIR}/scripts/composer/ScriptHandler.php;
   fi
-  if [ -f ${BASEDIR}/scripts/update/.download-before-update ]; then
-    rm -rf ${BASEDIR}/scripts/update/.download-before-update;
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.download-before-update ]; then
+    rm -rf ${BASEDIR}/vendor/vardot/varbase-updater/config/.download-before-update;
   fi
   composer dump-autoload;
 }
 
 download_before_update(){
-  if [ -f ${BASEDIR}/scripts/update/.download-before-update ]; then
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.download-before-update ]; then
     while read p; do
       echo -e "$(tput setaf 2)Downloading $p.$(tput sgr 0)";
       echo -e "$(tput setaf 2)Downloading $p.$(tput sgr 0)" >> ${ERRORLOG};
@@ -138,22 +138,22 @@ download_before_update(){
           echo "$(tput setab 1)$(tput setaf 7)Error while downloading $p. Please check ${ERRORLOG} for more info.$(tput sgr 0)";
           exit_and_revert;
       fi
-    done < ${BASEDIR}/scripts/update/.download-before-update
+    done < ${BASEDIR}/vendor/vardot/varbase-updater/config/.download-before-update
   fi
 }
 
 copy_after_update(){
-  if [ -f ${BASEDIR}/scripts/update/.skip-update ]; then
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update ]; then
     while read p; do
       if [ -d "${BASEDIR}/update_backups/skip/${p}" ]; then
         cp -r ${BASEDIR}/update_backups/skip/${p} ${BASEDIR}/${DRUPALPATH}/modules/contrib/;
       fi
-    done < ${BASEDIR}/scripts/update/.skip-update
+    done < ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update
   fi
 }
 
 enable_after_update(){
-  if [ -f ${BASEDIR}/scripts/update/.enable-after-update ]; then
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.enable-after-update ]; then
     while read p; do
       $DRUSH en $p --yes --strict=0 1> >(tee -a ${ERRORLOG} >&1) 2> >(tee -a ${ERRORLOG} >&2);
       result="$?";
@@ -161,12 +161,12 @@ enable_after_update(){
           echo "$(tput setab 1)$(tput setaf 7)Error while enabling $p. Please check ${ERRORLOG} for more info.$(tput sgr 0)";
           exit_and_revert;
       fi
-    done < ${BASEDIR}/scripts/update/.enable-after-update
+    done < ${BASEDIR}/vendor/vardot/varbase-updater/config/.enable-after-update
   fi
 }
 
 echo "$(tput setab 2)";
-php ${BASEDIR}/scripts/update/version-check.php current-message ${BASEDIR}/composer.json;
+php ${BASEDIR}/bin/version-check.php current-message ${BASEDIR}/composer.json;
 echo "$(tput sgr 0)";
 echo "$(tput setaf 2)This command will guide you to update your Varbase project.$(tput sgr 0)";
 echo "";
@@ -223,12 +223,12 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)";
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)" >> ${ERRORLOG};
   cleanup;
-  composer run-script varbase-composer-generate > ${BASEDIR}/composer.new.json;
+  composer varbase-refactor-composer > ${BASEDIR}/composer.new.json;
   result="$?";
   if [ "$result" -ne 0 ]; then
       echo -e "$(tput setab 1)$(tput setaf 7)There was and error while preparing composer.json for Varbase updates. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       echo -e "$(tput setab 1)$(tput setaf 7)If you are running Varbase 8.x-4.x or 8.x-5.x version, make sure to update varbase-project using the update command: $(tput sgr 0)";
-      echo -e "$(tput setaf 2)wget -O - -q https://raw.githubusercontent.com/Vardot/varbase-updater/master/scripts/update/update.php | php$(tput sgr 0)";
+      echo -e "$(tput setaf 2)composer require vardot/varbase-updater$(tput sgr 0)";
       exit_and_revert;
   fi
   backup_skipped_modules;
@@ -271,16 +271,16 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
       exit_and_revert;
   fi
 
-  if [ -f ${BASEDIR}/scripts/update/.skip-update ]; then
-    rm -rf ${BASEDIR}/scripts/update/.skip-update;
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update ]; then
+    rm -rf ${BASEDIR}/vendor/vardot/varbase-updater/config/.skip-update;
   fi
-  if [ -f ${BASEDIR}/scripts/update/.enable-after-update ]; then
-    rm -rf ${BASEDIR}/scripts/update/.enable-after-update;
+  if [ -f ${BASEDIR}/vendor/vardot/varbase-updater/config/.enable-after-update ]; then
+    rm -rf ${BASEDIR}/vendor/vardot/varbase-updater/config/.enable-after-update;
   fi
 
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)";
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)" >> ${ERRORLOG};
-  php ${BASEDIR}/scripts/update/version-check.php next-message ${BASEDIR}/composer.json;
+  php ${BASEDIR}/bin/version-check.php next-message ${BASEDIR}/composer.json;
   cd ${BASEDIR};
 else
   echo "$(tput setaf 2)Unrecognized option, exiting...$(tput sgr 0)";

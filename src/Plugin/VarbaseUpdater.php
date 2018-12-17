@@ -183,7 +183,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   }
 
   public function handlePackageTags(PackageEvent $event) {
-    $tagsPath = $this->getDrupalRoot(getcwd(), "") . "scripts/update/tags.json";
+    $tagsPath = $this->getDrupalRoot(dirname(__FILE__), "../../") . "config/tags.json";
     if(!file_exists($tagsPath)) return;
 
     $installedPackage = $this->getPackageFromOperation($event->getOperation());
@@ -405,7 +405,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   }
 
   public function handlePackagePatchTags(PatchEvent $event) {
-    $tagsPath = $this->getDrupalRoot(getcwd(), "") . "scripts/update/tags.json";
+    $tagsPath = $this->getDrupalRoot(dirname(__FILE__), "../../") . "config/tags.json";
     if(!file_exists($tagsPath)) return;
 
     $installedPackage = $event->getPackage();

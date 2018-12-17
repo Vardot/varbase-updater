@@ -34,18 +34,6 @@
     "scripts": {
       "post-drupal-scaffold-cmd":[
           "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"
-      ],
-      "pre-patch-apply": [
-          "Varbase\\composer\\VarbaseUpdate::handlePackagePatchTags"
-      ],
-      "post-package-update": [
-          "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
-      ],
-      "post-package-install": [
-          "Varbase\\composer\\VarbaseUpdate::handlePackageTags"
-      ],
-      "patch-apply-error": [
-          "Varbase\\composer\\VarbaseUpdate::handlePackagePatchError"
       ]
     },
     "repos": {
