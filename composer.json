@@ -1,6 +1,8 @@
 {
   "name": "vardot/varbase-updater",
   "type": "composer-plugin",
+  "version": "1.0.0",
+  "description": "Varbase Updater",
   "require": {
       "composer-plugin-api": "^1.1",
       "symfony/yaml": "^3.1"
@@ -14,5 +16,6 @@
   "bin":[
     "scripts/update/update-varbase.sh",
     "scripts/update/version-check.php"
-  ]
+  ],
+  "license": "GPL-2.0-or-later"
 }
