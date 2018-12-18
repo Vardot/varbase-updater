@@ -50,7 +50,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       $this->composer = $composer;
       $this->io = $io;
 
-      if(!defined('PatchEvents::PATCH_APPLY_ERROR')){
+      if(!defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
         $io->write("<info>Please install composer-patches from vardot repo for catching patch apply errors</info>");
       }
   }
@@ -85,7 +85,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   public function getCapabilities()
   {
       return array(
-          'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\Commands\RefactorComposerCommandProvider',
+          'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\Commands\CommandsProvider'
       );
   }
 

@@ -14,8 +14,7 @@
     "psr-4": {"vardot\\Composer\\": "src"}
   },
   "bin":[
-    "scripts/update/update-varbase.sh",
-    "scripts/update/version-check.php"
+    "scripts/update/update-varbase.sh"
   ],
   "license": "GPL-2.0-or-later"
 }

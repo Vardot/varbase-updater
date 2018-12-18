@@ -166,7 +166,7 @@ enable_after_update(){
 }
 
 echo "$(tput setab 2)";
-php ${BASEDIR}/bin/version-check.php current-message ${BASEDIR}/composer.json;
+composer varbase-version-check current-message;
 echo "$(tput sgr 0)";
 echo "$(tput setaf 2)This command will guide you to update your Varbase project.$(tput sgr 0)";
 echo "";
@@ -280,7 +280,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
 
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)";
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)" >> ${ERRORLOG};
-  php ${BASEDIR}/bin/version-check.php next-message ${BASEDIR}/composer.json;
+  composer varbase-version-check next-message;
   cd ${BASEDIR};
 else
   echo "$(tput setaf 2)Unrecognized option, exiting...$(tput sgr 0)";

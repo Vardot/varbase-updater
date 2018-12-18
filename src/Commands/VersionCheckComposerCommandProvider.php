@@ -30,19 +30,18 @@ use Composer\Util\RemoteFilesystem;
 use Composer\Util\ProcessExecutor;
 use vardot\Composer\Helpers\VersionHelper;
 
-class RefactorComposerCommand extends BaseCommand{
+class VersionCheckComposerCommand extends BaseCommand{
 
   protected function configure()
   {
-    $this->setName('varbase-refactor-composer');
-    $this->addArgument('file', InputArgument::REQUIRED, 'Where do you want to save the output');
+    $this->setName('varbase-version-check');
+    $this->addArgument('type', InputArgument::REQUIRED, 'Version type');
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-      $output->writeln('Refactoring composer.json');
-      $path = $input->getArgument('file');
-      $this->generate($path);
+      $type = $input->getArgument('type');
+      $this->getVersion($type);
   }
 
   /**
@@ -133,18 +132,11 @@ class RefactorComposerCommand extends BaseCommand{
     return $merged;
   }
 
-  public function generate($savePath) {
+  public function getVersion($type) {
     $composer = $this->getComposer();
     $repositoryManager = $composer->getRepositoryManager();
     $localRepository = $repositoryManager->getLocalRepository();
     $packages = $localRepository->getPackages();
-    $projectPackage = $composer->getPackage();
-    $projectPackageRequires = $projectPackage->getRequires();
-    $projectPackageExtras = $projectPackage->getExtra();
-    $projectPackageRepos = $projectPackage->getRepositories();
-    $projectScripts = $projectPackage->getScripts();
-    $projectPackagePatches = [];
-    $continue = true;
     $paths = $this->getPaths($composer->getPackage());
     $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
     $extraConfig = [];
@@ -158,33 +150,63 @@ class RefactorComposerCommand extends BaseCommand{
     $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig);
 
     if(!$versionInfo){
-      $continue = false;
-    }
-
-    if(!isset($updateConfig['profile']) || !isset($updateConfig['package'])){
-      $continue = false;
-    }
-
-    if(!isset($versionInfo['next'])){
-      $continue = false;
-    }
-
-    if(!$continue){
-      $dumper = new ArrayDumper();
-      $json = $dumper->dump($projectPackage);
-      $json["prefer-stable"] = true;
-      $projectConfig = JsonFile::encode($json);
-      file_put_contents($savePath, $projectConfig);
       return;
     }
 
+    switch ($type){
+      case "current":
+        print $versionInfo["current"];
+      break;
+      case "next":
+        if(isset($versionInfo['next'])){
+          print $versionInfo["next"];
+        }
+      break;
+      case "current-message":
+        $profileName = $versionInfo["profileName"];
+        if(isset($versionInfo['next'])){
+          print "Updating $profileName (" . $versionInfo["current"] . ") to $profileName (" . $versionInfo["next"] . ")\n";
+        }else{
+          print "You are on the latest $profileName version. No updates are required.\n";
+        }
+      break;
+      case "next-message":
+        $profileName = $versionInfo["profileName"];
+        if(isset($versionInfo['next'])){
+          print "You are on $profileName (" . $profileVersion . "). A newer version (" . $conf["to"] . ") is now available.\n";
+          print "Please run: ./bin/update-varbase.sh to update to $profileName (" . $conf["to"] . ").\n";
+        }else{
+          print "Congratulations! You are on the latest $profileName version now.\n";
+        }
+      break;
+    }
+    die();
+
+    $projectPackage = $composer->getPackage();
+    $projectPackageRequires = $projectPackage->getRequires();
+    $projectPackageExtras = $projectPackage->getExtra();
+    $projectPackageRepos = $projectPackage->getRepositories();
+    $projectScripts = $projectPackage->getScripts();
+    $projectPackagePatches = [];
 
     if(isset($projectPackageExtras["patches"])){
       $projectPackagePatches = $projectPackageExtras["patches"];
     }
 
-    $profilePackage = $versionInfo["profile"];
-    $profileVersion = $profilePackage->getPrettyConstraint();
+    $loader = new JsonLoader(new ArrayLoader());
+    $profileConfigPath = $paths['profilesPath'] . $updateConfig['profile'] . "/composer.json";
+    $profileConfig = JsonFile::parseJson(file_get_contents($profileConfigPath), $profileConfigPath);
+    $profileVersion = $projectPackageRequires[$updateConfig['package']]->getPrettyConstraint();
+
+    if(!isset($profileConfig['version'])){
+      $profileConfig['version'] = "0.0.0"; //dummy version just to handle UnexpectedValueException
+    }
+
+    $profileConfig = JsonFile::encode($profileConfig);
+    $profilePackage = $loader->load($profileConfig);
+
+    $io = $this->getIO();
+
     $profilePackageRequires = $profilePackage->getRequires();
 
     $profileLink = $projectPackageRequires[$updateConfig['package']];
