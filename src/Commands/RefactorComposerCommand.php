@@ -144,7 +144,7 @@ class RefactorComposerCommand extends BaseCommand{
     $projectScripts = $projectPackage->getScripts();
     $projectPackagePatches = [];
     $continue = true;
-    $paths = $this->getPaths($composer->getPackage());
+    $paths = $this->getPaths($composer->getPackage(), $drupalPath);
     $loader = new JsonLoader(new ArrayLoader());
 
     $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
