@@ -278,10 +278,10 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
     rm -rf ${BASEDIR}/vendor/vardot/varbase-updater/config/.enable-after-update;
   fi
 
+  cd ${BASEDIR};
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)";
   echo "$(tput setaf 2)Hoya! Updates are now done. We will add a link in the near future for here to link to common issues appearing after updates and how to fix them.$(tput sgr 0)" >> ${ERRORLOG};
   composer varbase-version-check next-message;
-  cd ${BASEDIR};
 else
   echo "$(tput setaf 2)Unrecognized option, exiting...$(tput sgr 0)";
   exit;
