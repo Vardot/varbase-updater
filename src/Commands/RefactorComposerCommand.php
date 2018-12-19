@@ -146,6 +146,8 @@ class RefactorComposerCommand extends BaseCommand{
     $projectPackagePatches = [];
     $continue = true;
     $paths = $this->getPaths($composer->getPackage());
+    $loader = new JsonLoader(new ArrayLoader());
+
     $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
     $extraConfig = [];
     if(file_exists($paths["composerPath"] . "update-config.json")){
@@ -184,7 +186,7 @@ class RefactorComposerCommand extends BaseCommand{
     }
 
     $profilePackage = $versionInfo["profile"];
-    $profileVersion = $profilePackage->getPrettyConstraint();
+    $profileVersion = $profilePackage->getVersion();
     $profilePackageRequires = $profilePackage->getRequires();
 
     $profileLink = $projectPackageRequires[$updateConfig['package']];
