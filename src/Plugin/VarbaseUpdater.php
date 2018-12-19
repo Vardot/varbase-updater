@@ -66,10 +66,10 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       PackageEvents::POST_PACKAGE_UPDATE => array('handlePackageTags', 11)
     );
 
-    if(defined('PatchEvents::PATCH_APPLY_ERROR')){
+    if(defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
       $events[PatchEvents::PATCH_APPLY_ERROR] = array('handlePackagePatchError', 11);
     }
-    if(defined('PatchEvents::PRE_PATCH_APPLY')){
+    if(defined('cweagans\Composer\PatchEvents::PRE_PATCH_APPLY')){
       $events[PatchEvents::PRE_PATCH_APPLY] = array('handlePackagePatchTags', 11);
     }
 
