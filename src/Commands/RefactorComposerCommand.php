@@ -36,13 +36,15 @@ class RefactorComposerCommand extends BaseCommand{
   {
     $this->setName('varbase-refactor-composer');
     $this->addArgument('file', InputArgument::REQUIRED, 'Where do you want to save the output');
+    $this->addArgument('drupal-path', InputArgument::REQUIRED, 'Drupal installation path');
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
       $output->writeln('Refactoring composer.json');
       $path = $input->getArgument('file');
-      $this->generate($path);
+      $drupalPath = $input->getArgument('drupal-path');
+      $this->generate($path, $drupalPath);
   }
 
   /**
@@ -58,17 +60,14 @@ class RefactorComposerCommand extends BaseCommand{
     return $project_root . '/' . $rootPath;
   }
 
-  protected function getPaths($package) {
+  protected function getPaths($package, $drupalPath = "docroot") {
     $paths = [];
     $projectExtras = $package->getExtra();
 
     $scriptPath = dirname(__FILE__);
     $paths["composerPath"] = $this->getDrupalRoot(getcwd(), "");
     $paths["pluginPath"] = $this->getDrupalRoot($scriptPath, "../../");
-    $paths["rootPath"] = "docroot";
-    if(isset($projectExtras["install-path"])){
-      $paths["rootPath"] = $projectExtras["install-path"];
-    }
+    $paths["rootPath"] = $drupalPath;
     $paths["contribModulesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/modules/contrib/";
     $paths["customModulesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/modules/custom/";
     $paths["contribThemesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/themes/contrib/";
@@ -133,7 +132,7 @@ class RefactorComposerCommand extends BaseCommand{
     return $merged;
   }
 
-  public function generate($savePath) {
+  public function generate($savePath, $drupalPath) {
     $composer = $this->getComposer();
     $repositoryManager = $composer->getRepositoryManager();
     $localRepository = $repositoryManager->getLocalRepository();

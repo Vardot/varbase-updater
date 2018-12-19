@@ -223,7 +223,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)";
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)" >> ${ERRORLOG};
   cleanup;
-  composer varbase-refactor-composer ${BASEDIR}/composer.new.json;
+  composer varbase-refactor-composer ${BASEDIR}/composer.new.json ${DRUPALPATH};
   result="$?";
   if [ "$result" -ne 0 ]; then
       echo -e "$(tput setab 1)$(tput setaf 7)There was and error while preparing composer.json for Varbase updates. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
