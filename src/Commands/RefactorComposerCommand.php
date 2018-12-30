@@ -134,6 +134,7 @@ class RefactorComposerCommand extends BaseCommand{
 
   public function generate($savePath, $drupalPath) {
     $composer = $this->getComposer();
+    $latestProjectJsonPackage = null;
     $repositoryManager = $composer->getRepositoryManager();
     $localRepository = $repositoryManager->getLocalRepository();
     $packages = $localRepository->getPackages();
@@ -146,6 +147,7 @@ class RefactorComposerCommand extends BaseCommand{
     $continue = true;
     $paths = $this->getPaths($composer->getPackage(), $drupalPath);
     $loader = new JsonLoader(new ArrayLoader());
+    $downloader = new RemoteFilesystem($this->getIO(), $this->getComposer()->getConfig());
 
     $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
     $extraConfig = [];
@@ -157,6 +159,20 @@ class RefactorComposerCommand extends BaseCommand{
     $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
 
     $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig);
+
+    $composerProjectJsonUrl = $updateConfig["composer-project-json-url"];
+    $filename = uniqid(sys_get_temp_dir().'/') . ".json";
+    $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
+    $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
+
+    if(file_exists($filename)){
+      $latestProjectJsonConfig = JsonFile::parseJson(file_get_contents($filename), $filename);
+      if(!isset($latestProjectJsonConfig['version'])){
+        $latestProjectJsonConfig['version'] = "0.0.0";
+      }
+      $latestProjectJsonConfig = JsonFile::encode($latestProjectJsonConfig);
+      $latestProjectJsonPackage = $loader->load($latestProjectJsonConfig);
+    }
 
     if(!$versionInfo){
       $continue = false;
@@ -245,7 +261,7 @@ class RefactorComposerCommand extends BaseCommand{
             $extras = array_replace_recursive($extras, $conf["extras"]);
           }
         }
-      } elseif ($key == "all"){
+      } elseif ($key == "all" && false){
         if(isset($conf["packages"]["crucial"])){
           $crucialPackages = array_replace_recursive($crucialPackages, $conf["packages"]["crucial"]);
         }
@@ -308,7 +324,7 @@ class RefactorComposerCommand extends BaseCommand{
     foreach (glob($paths['contribModulesPath'] . "*/composer.json") as $file) {
       $pluginConfig = JsonFile::parseJson(file_get_contents($file), $file);
       if(!isset($pluginConfig['version'])){
-        $pluginConfig['version'] = "6.2.0";
+        $pluginConfig['version'] = "0.0.0";
       }
       $pluginConfig = JsonFile::encode($pluginConfig);
       $pluginPackage = $loader->load($pluginConfig);
@@ -327,7 +343,7 @@ class RefactorComposerCommand extends BaseCommand{
     foreach (glob($paths['contribThemesPath'] . "*/composer.json") as $file) {
       $pluginConfig = JsonFile::parseJson(file_get_contents($file), $file);
       if(!isset($pluginConfig['version'])){
-        $pluginConfig['version'] = "6.2.0";
+        $pluginConfig['version'] = "0.0.0";
       }
       $pluginConfig = JsonFile::encode($pluginConfig);
       $pluginPackage = $loader->load($pluginConfig);
@@ -342,7 +358,7 @@ class RefactorComposerCommand extends BaseCommand{
 
     foreach ($requiredPackages as $name => $package) {
       if(isset($projectPackageRequires[$name])){
-        $requiredPackageLinks[] = $projectPackageRequires[$name];
+        $requiredPackageLinks[$name] = $projectPackageRequires[$name];
       }else{
         $link = new Link($projectPackage->getName(), $package["name"], new Constraint(">=", $package["version"]), "", "^".$package["version"]);
         $requiredPackageLinks[$name] = $link;
@@ -356,7 +372,7 @@ class RefactorComposerCommand extends BaseCommand{
 
     foreach ($projectPackageRequires as $projectName => $projectPackageLink) {
       if(!isset($profilePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
-        $requiredPackageLinks[] = $projectPackageLink;
+        $requiredPackageLinks[$projectName] = $projectPackageLink;
       }
     }
 
@@ -368,30 +384,58 @@ class RefactorComposerCommand extends BaseCommand{
     $mergedRepos = self::array_merge_recursive_distinct($projectPackageRepos, $repos, $paths["rootPath"]);
     $mergedScripts = self::array_merge_recursive_distinct($projectScripts, $scripts, $paths["rootPath"]);
 
-    //Make sure to run the Varbase postDrupalScaffoldProcedure insetad of the current project postDrupalScaffoldProcedure
-    if(isset($mergedScripts["post-drupal-scaffold-cmd"])){
-      //$mergedScripts["post-drupal-scaffold-cmd"]=["Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"];
+    if(!$latestProjectJsonPackage){
+      $projectPackage->setExtra($mergedExtras);
+      $projectPackage->setRepositories($mergedRepos);
+      $projectPackage->setRequires($requiredPackageLinks);
+      $projectPackage->setScripts($mergedScripts);
+
+      $dumper = new ArrayDumper();
+      $json = $dumper->dump($projectPackage);
+      $json["prefer-stable"] = true;
+      $json["extra"]["composer-exit-on-patch-failure"] = false;
+
+      //Fixing the position of installer path web/libraries/{$name} as it should be after slick and ace so it won't override them
+      if(isset($extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+        unset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}']);
+        $extraLibsArray=[
+          $paths["rootPath"].'/libraries/{$name}' => $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}']
+        ];
+        $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
+      }
+      $projectConfig = JsonFile::encode($json);
+      file_put_contents($savePath, $projectConfig);
+    }else{
+      $latestExtras = $latestProjectJsonPackage->getExtra();
+      $latestRepos = $latestProjectJsonPackage->getRepositories();
+      $latestRequires = $latestProjectJsonPackage->getRequires();
+      $latestScripts = $latestProjectJsonPackage->getScripts();
+
+      $latestMergedExtras = self::array_merge_recursive_distinct($mergedExtras, $latestExtras, $paths["rootPath"]);
+      $latestMergedRepos = self::array_merge_recursive_distinct($mergedRepos, $latestRepos, $paths["rootPath"]);
+      $latestMergedRequires = self::array_merge_recursive_distinct($requiredPackageLinks, $latestRequires, $paths["rootPath"]);
+      $latestMergedScripts = self::array_merge_recursive_distinct($mergedScripts, $latestScripts, $paths["rootPath"]);
+
+      $latestProjectJsonPackage->setExtra($latestMergedExtras);
+      $latestProjectJsonPackage->setRepositories($latestMergedRepos);
+      $latestProjectJsonPackage->setRequires($latestMergedRequires);
+      $latestProjectJsonPackage->setScripts($latestMergedScripts);
+
+      $dumper = new ArrayDumper();
+      $json = $dumper->dump($latestProjectJsonPackage);
+      $json["prefer-stable"] = true;
+      $json["extra"]["composer-exit-on-patch-failure"] = false;
+
+      //Fixing the position of installer path web/libraries/{$name} as it should be after slick and ace so it won't override them
+      if(isset($extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+        unset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}']);
+        $extraLibsArray=[
+          $paths["rootPath"].'/libraries/{$name}' => $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}']
+        ];
+        $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
+      }
+      $latestProjectConfig = JsonFile::encode($json);
+      file_put_contents($savePath, $latestProjectConfig);
     }
-
-    $projectPackage->setExtra($mergedExtras);
-    $projectPackage->setRepositories($mergedRepos);
-    $projectPackage->setRequires($requiredPackageLinks);
-    $projectPackage->setScripts($mergedScripts);
-
-    $dumper = new ArrayDumper();
-    $json = $dumper->dump($projectPackage);
-    $json["prefer-stable"] = true;
-    $json["extra"]["composer-exit-on-patch-failure"] = false;
-
-    //Fixing the position of installer path web/libraries/{$name} as it should be after slick and ace so it won't override them
-    if(isset($extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
-      unset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}']);
-      $extraLibsArray=[
-        $paths["rootPath"].'/libraries/{$name}' => $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}']
-      ];
-      $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
-    }
-    $projectConfig = JsonFile::encode($json);
-    file_put_contents($savePath, $projectConfig);
   }
 }

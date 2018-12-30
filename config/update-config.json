@@ -7,7 +7,7 @@
   },
   "8.4.28": {
     "from": "8.4.28",
-    "to": "8.6.2",
+    "to": "8.6.3",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
@@ -21,62 +21,25 @@
       "entity_browser_generic_embed"
     ]
   },
-  "all": {
+  "8.5.*": {
+    "from": "8.5.*",
+    "to": "8.5.5"
+  },
+  "8.5.5": {
+    "from": "8.5.5",
+    "to": "8.6.3",
     "packages": {
       "crucial": {
-        "drupal/page_manager": "4.0-beta3"
+        "drupal/varbase_carousels": "6.0",
+        "drupal/entity_browser": "2.0",
+        "drupal/video_embed_field": "2.0",
+        "drupal/media_entity": "2.0-beta3",
+        "drupal/panelizer": "4.1"
       }
     },
-    "skip":[
-      "media_entity_document",
-      "media_entity_image"
-    ],
-    "scripts": {
-      "post-drupal-scaffold-cmd":[
-          "Varbase\\composer\\ScriptHandler::postDrupalScaffoldProcedure"
-      ]
-    },
-    "repos": {
-      "composer-patches": {
-        "type": "vcs",
-        "url": "https://github.com/vardot/composer-patches"
-      },
-      "assets": {
-        "type": "composer",
-        "url": "https://asset-packagist.org"
-      }
-    },
-    "extras": {
-      "installer-paths": {
-        "{$drupalPath}/libraries/{$name}": ["type:bower-asset", "type:npm-asset"],
-        "{$drupalPath}/libraries/slick": ["npm-asset/slick-carousel"],
-        "{$drupalPath}/libraries/ace": ["npm-asset/ace-builds"]
-      },
-      "installer-types": [
-        "bower-asset",
-        "npm-asset"
-      ],
-      "drupal-libraries": {
-        "library-directory": "{$drupalPath}/libraries",
-        "libraries": [
-            {
-                "name": "dropzone",
-                "package": "npm-asset/dropzone"
-            },
-            {
-                "name": "blazy",
-                "package": "npm-asset/blazy"
-            },
-            {
-                "name": "slick",
-                "package": "npm-asset/slick-carousel"
-            },
-            {
-                "name": "ace",
-                "package": "npm-asset/ace-builds"
-            }
-        ]
-      }
-    }
-  }
+    "enable-after-update":[
+      "entity_browser_generic_embed"
+    ]
+  },
+  "composer-project-json-url": "https://raw.githubusercontent.com/Vardot/varbase-project/8.6.x/composer.json"
 }
