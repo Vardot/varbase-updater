@@ -453,6 +453,11 @@ class RefactorComposerCommand extends BaseCommand{
         ];
         $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
       }
+
+      if(isset($json["repositories"]["packagist.org"])){
+        unset($json["repositories"]["packagist.org"]);
+      }
+
       $latestProjectConfig = JsonFile::encode($json);
       file_put_contents($savePath, $latestProjectConfig);
     }
