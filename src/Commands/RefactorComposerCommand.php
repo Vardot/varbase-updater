@@ -13,7 +13,9 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Semver\Constraint\Constraint;
+use Composer\Package\Loader\RootPackageLoader;
 use Composer\Package\Loader\JsonLoader;
+use Composer\Config;
 use Composer\Package\Loader\ArrayLoader;
 use Composer\Package\Dumper\ArrayDumper;
 use Composer\Package\Link;
@@ -119,6 +121,7 @@ class RefactorComposerCommand extends BaseCommand{
     $merged = $array1;
     foreach ($array2 as $key => &$value) {
         $newKey = preg_replace('/{\$drupalPath}/', $drupalPath, $key);
+        $newKey = preg_replace('/docroot/', $drupalPath, $newKey);
         if(!isset($merged[$newKey])){
           $merged[$newKey] = [];
         }
@@ -126,6 +129,7 @@ class RefactorComposerCommand extends BaseCommand{
             $merged[$newKey] = self::array_merge_recursive_distinct($merged[$newKey], $value, $drupalPath);
         } else {
             $newValue = preg_replace('/{\$drupalPath}/', $drupalPath, $value);
+            $newValue = preg_replace('/docroot/', $drupalPath, $newValue);
             $merged[$newKey] = $newValue;
         }
     }
@@ -167,11 +171,10 @@ class RefactorComposerCommand extends BaseCommand{
 
     if(file_exists($filename)){
       $latestProjectJsonConfig = JsonFile::parseJson(file_get_contents($filename), $filename);
-      if(!isset($latestProjectJsonConfig['version'])){
-        $latestProjectJsonConfig['version'] = "0.0.0";
-      }
-      $latestProjectJsonConfig = JsonFile::encode($latestProjectJsonConfig);
-      $latestProjectJsonPackage = $loader->load($latestProjectJsonConfig);
+      $config = new Config();
+      $config->merge($latestProjectJsonConfig);
+      $rootLoader = new RootPackageLoader($repositoryManager, $config);
+      $latestProjectJsonPackage = $rootLoader->load($latestProjectJsonConfig);
     }
 
     if(!$versionInfo){
@@ -411,15 +414,31 @@ class RefactorComposerCommand extends BaseCommand{
       $latestRequires = $latestProjectJsonPackage->getRequires();
       $latestScripts = $latestProjectJsonPackage->getScripts();
 
+
       $latestMergedExtras = self::array_merge_recursive_distinct($mergedExtras, $latestExtras, $paths["rootPath"]);
       $latestMergedRepos = self::array_merge_recursive_distinct($mergedRepos, $latestRepos, $paths["rootPath"]);
-      $latestMergedRequires = self::array_merge_recursive_distinct($requiredPackageLinks, $latestRequires, $paths["rootPath"]);
+      //$latestMergedRequires = self::array_merge_recursive_distinct($requiredPackageLinks, $latestRequires, $paths["rootPath"]);
       $latestMergedScripts = self::array_merge_recursive_distinct($mergedScripts, $latestScripts, $paths["rootPath"]);
+
+      foreach ($latestRequires as $projectName => $projectPackageLink) {
+        if($projectName == $updateConfig['package']) continue;
+        if(!isset($profilePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
+          $requiredPackageLinks[$projectName] = $projectPackageLink;
+        }else if(isset($requiredPackageLinks[$projectName])){
+          $requiredPackageLinks[$projectName] = $projectPackageLink;
+        }
+      }
+
+      foreach ($crucialPackages as $key => $version) {
+        $link = new Link($projectPackage->getName(), $key, new Constraint("==", $version), "", $version);
+        $requiredPackageLinks[$key] = $link;
+      }
 
       $latestProjectJsonPackage->setExtra($latestMergedExtras);
       $latestProjectJsonPackage->setRepositories($latestMergedRepos);
-      $latestProjectJsonPackage->setRequires($latestMergedRequires);
+      $latestProjectJsonPackage->setRequires($requiredPackageLinks);
       $latestProjectJsonPackage->setScripts($latestMergedScripts);
+
 
       $dumper = new ArrayDumper();
       $json = $dumper->dump($latestProjectJsonPackage);
