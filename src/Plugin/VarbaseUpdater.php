@@ -317,26 +317,26 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       $io->write([
           "<warning>Patch: " . $event->getUrl() . "</warning>",
           "<warning>\t" . $event->getDescription() . "</warning>",
-          "<warning>\tIs already applied on  " . $package->getName() . " " . $package->getFullPrettyVersion() . "</warning>"
+          "<warning>\tis already applied or committed in " . $package->getName() . " " . $package->getFullPrettyVersion() . "</warning>"
         ]
       );
 
-      $answer = $io->ask("<info>Would you like to remove it form patches list ? (yes)</info>", "yes");
+      $answer = $io->ask("<info>Would you like to remove it form you composer.json patches list? (yes)</info>", "yes");
 
       if(preg_match("/yes/i", $answer)){
-        $io->write("<info>Removing Patch: " . $event->getUrl() . "</info>", true);
+        $io->write("<info>Removing patch: " . $event->getUrl() . "</info>", true);
         $patches = [];
         $patchesFile = "";
         if (isset($rootPackageExtras['patches'])) {
-          $io->write('<info>Removing patch from root package.</info>');
+          $io->write('<info>Removing patch from root composer.json.</info>');
           $patches = $rootPackageExtras['patches'];
         } elseif (isset($rootPackageExtras['patches-file'])) {
-          $io->write('<info>Removing patch from patches file. ' . $rootPackageExtras['patches-file'] . '.</info>');
+          $io->write('<info>Removing patch from patches file: ' . $rootPackageExtras['patches-file'] . '.</info>');
           $patchesFile = file_get_contents($rootPackageExtras['patches-file']);
           $patchesFile = json_decode($patchesFile, TRUE);
           $error = json_last_error();
           if ($error != 0) {
-            $io->write('<error>There was an error reading patches file.</error>');
+            $io->write('<error>There was an error reading the patches file.</error>');
           }
 
           if (isset($patchesFile['patches'])) {
@@ -371,9 +371,9 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
             $json = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
             $rootFile = $this->getDrupalRoot(getcwd(), "") . "composer.json";
             if(file_put_contents($rootFile, $json)){
-              $io->write('<info>Root package is saved successfully.</info>');
+              $io->write('<info>Root composer.json is saved successfully.</info>');
             }else{
-              $io->write('<error>Couldn\'t save root package.</error>');
+              $io->write('<error>Couldn\'t save the root composer.json.</error>');
               self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
             }
           } elseif ($rootPackageExtras['patches-file']) {
@@ -382,7 +382,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
             if(file_put_contents($rootPackageExtras['patches-file'], $patchesFile)){
               $io->write('<info>Patches file is saved successfully.</info>');
             }else{
-              $io->write('<error>Couldn\'t save patches file.</error>');
+              $io->write('<error>Couldn\'t save the patches file.</error>');
               self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
             }
           } else {
@@ -391,8 +391,8 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
             self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
           }
         }else{
-          $io->write("<warning>Couldn't find the patch inside root composer.json or patches file, probably it's provided from dependencies. </warning>", true);
-          $io->write("<warning>Logging patch instead of removing.</warning>", true);
+          $io->write("<warning>Couldn't find the patch inside root composer.json or patches file, probably it's provided from dependencies?</warning>", true);
+          $io->write("<warning>Logging patch to the failed-patches.txt file instead of removing it.</warning>", true);
           self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
         }
       }else{
