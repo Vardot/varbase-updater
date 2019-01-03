@@ -321,7 +321,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
         ]
       );
 
-      $answer = $io->ask("<info>Would you like to remove it form you composer.json patches list? (yes)</info>", "yes");
+      $answer = $io->ask("<info>Would you like to remove it form your composer.json patches list? (yes)</info>", "yes");
 
       if(preg_match("/yes/i", $answer)){
         $io->write("<info>Removing patch: " . $event->getUrl() . "</info>", true);
