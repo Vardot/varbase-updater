@@ -6,7 +6,9 @@ A set of scripts and tools that will help you to update to the newer versions of
 ## Install with Composer
 
 If you're using Varbase 8.6.2 or older, install varbase-updater through Composer.
-`composer require vardot/varbase-updater `.
+```
+composer require vardot/varbase-updater
+```
 
 If you're using Varbase 8.6.3 or newer, skip this step; varbase-updater comes pre-installed with your Varbase project.
 
