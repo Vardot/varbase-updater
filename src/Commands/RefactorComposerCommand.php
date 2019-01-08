@@ -399,10 +399,11 @@ class RefactorComposerCommand extends BaseCommand{
       $json["extra"]["composer-exit-on-patch-failure"] = false;
 
       //Fixing the position of installer path web/libraries/{$name} as it should be after slick and ace so it won't override them
-      if(isset($extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+      if(isset($json["extra"]) && isset($json["extra"]["installer-paths"]) && isset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+        $libsPathExtra = $json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}'];
         unset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}']);
         $extraLibsArray=[
-          $paths["rootPath"].'/libraries/{$name}' => $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}']
+          $paths["rootPath"].'/libraries/{$name}' => $libsPathExtra
         ];
         $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
       }
@@ -446,10 +447,11 @@ class RefactorComposerCommand extends BaseCommand{
       $json["extra"]["composer-exit-on-patch-failure"] = false;
 
       //Fixing the position of installer path web/libraries/{$name} as it should be after slick and ace so it won't override them
-      if(isset($extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+      if(isset($json["extra"]) && isset($json["extra"]["installer-paths"]) && isset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}'])){
+        $libsPathExtra = $json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}'];
         unset($json["extra"]["installer-paths"][$paths["rootPath"].'/libraries/{$name}']);
         $extraLibsArray=[
-          $paths["rootPath"].'/libraries/{$name}' => $extras["installer-paths"][$paths["rootPath"].'/libraries/{$name}']
+          $paths["rootPath"].'/libraries/{$name}' => $libsPathExtra
         ];
         $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
       }
