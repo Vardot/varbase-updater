@@ -1,7 +1,7 @@
 {
   "name": "vardot/varbase-updater",
   "type": "composer-plugin",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Varbase Updater",
   "require": {
       "composer-plugin-api": "^1.1",
