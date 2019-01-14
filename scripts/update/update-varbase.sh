@@ -3,7 +3,7 @@ function clear_stdin(){
     while read -e -t 1; do : ; done
 }
 
-BASEDIR=$(PWD);
+BASEDIR=$(pwd);
 ERRORLOG=${BASEDIR}/.update-error-log;
 DRUPALPATH='docroot';
 if [ -d "${BASEDIR}/web" ]; then
