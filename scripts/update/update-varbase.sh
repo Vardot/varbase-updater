@@ -229,7 +229,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   composer varbase-refactor-composer ${BASEDIR}/composer.new.json ${DRUPALPATH};
   result="$?";
   if [ "$result" -ne 0 ]; then
-      echo -e "$(tput setab 1)$(tput setaf 7)There was and error while preparing composer.json for Varbase updates. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
+      echo -e "$(tput setab 1)$(tput setaf 7)There was an error while preparing composer.json for Varbase updates. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       echo -e "$(tput setab 1)$(tput setaf 7)If you are running Varbase 8.x-4.x or 8.x-5.x version, make sure to update varbase-project using the update command: $(tput sgr 0)";
       echo -e "$(tput setaf 2)composer require vardot/varbase-updater$(tput sgr 0)";
       exit_and_revert;
@@ -245,7 +245,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   composer update 1> >(tee -a ${ERRORLOG} >&1) 2> >(tee -a ${ERRORLOG} >&2);
   result="$?";
   if [ "$result" -ne 0 ]; then
-      echo -e "$(tput setab 1)$(tput setaf 7)There was and error while updating Varbase to the latest version. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
+      echo -e "$(tput setab 1)$(tput setaf 7)There was an error while updating Varbase to the latest version. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       exit_and_revert;
   fi
 
@@ -270,7 +270,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
   $DRUSH  updb --yes --strict=0 1> >(tee -a ${ERRORLOG} >&1) 2> >(tee -a ${ERRORLOG} >&2);
   result="$?";
   if [ "$result" -ne 0 ]; then
-      echo -e "$(tput setab 1)$(tput setaf 7)There was and error while updating Drupal core. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
+      echo -e "$(tput setab 1)$(tput setaf 7)There was an error while updating Drupal core. Please check ${ERRORLOG} for more information.$(tput sgr 0)";
       exit_and_revert;
   fi
 
