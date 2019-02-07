@@ -225,9 +225,15 @@ class RefactorComposerCommand extends BaseCommand{
           continue;
         }
         if(preg_match('/' . $conf["from"] . '/', $profileVersion)){
-          $profileLinkConstraint = new Constraint(">=", $conf["to"]);
-          $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
-          $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to"]);
+          if(isset($conf["to_value"])){
+            $profileLinkConstraint = new Constraint(">=", $conf["to_value"]);
+            $profileLinkConstraint->setPrettyString("~" . $conf["to_value"]);
+            $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to_value"]);
+          }else{
+            $profileLinkConstraint = new Constraint(">=", $conf["to"]);
+            $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
+            $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to"]);
+          }
           $requiredPackageLinks = [];
           $requiredPackageLinks[$updateConfig['package']] = $profileLink;
 
@@ -458,6 +464,28 @@ class RefactorComposerCommand extends BaseCommand{
 
       if(isset($json["repositories"]["packagist.org"])){
         unset($json["repositories"]["packagist.org"]);
+      }
+
+      if(isset($json["version"])){
+        unset($json["version"]);
+      }
+
+      if(isset($json["version_normalized"])){
+        unset($json["version_normalized"]);
+      }
+
+      foreach ($json["repositories"] as $key => $value) {
+        if($key == "packagist.org"){
+          unset($json["repositories"][$key]);
+        }
+        if(
+          isset($json["repositories"]["drupal"]) &&
+          $key != "drupal" &&
+          isset($value["url"]) &&
+          $value["url"] == "https://packages.drupal.org/8"
+        ){
+          unset($json["repositories"][$key]);
+        }
       }
 
       $latestProjectConfig = JsonFile::encode($json);
