@@ -429,11 +429,7 @@ class RefactorComposerCommand extends BaseCommand{
 
       foreach ($latestRequires as $projectName => $projectPackageLink) {
         if($projectName == $updateConfig['package']) continue;
-        if(!isset($profilePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
-          $requiredPackageLinks[$projectName] = $projectPackageLink;
-        }else if(isset($requiredPackageLinks[$projectName])){
-          $requiredPackageLinks[$projectName] = $projectPackageLink;
-        }
+        $requiredPackageLinks[$projectName] = $projectPackageLink;
       }
 
       foreach ($crucialPackages as $key => $version) {
