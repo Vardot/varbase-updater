@@ -413,6 +413,33 @@ class RefactorComposerCommand extends BaseCommand{
         ];
         $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
       }
+
+      if(isset($json["repositories"]["packagist.org"])){
+        unset($json["repositories"]["packagist.org"]);
+      }
+
+      if(isset($json["version"])){
+        unset($json["version"]);
+      }
+
+      if(isset($json["version_normalized"])){
+        unset($json["version_normalized"]);
+      }
+
+      foreach ($json["repositories"] as $key => $value) {
+        if($key == "packagist.org"){
+          unset($json["repositories"][$key]);
+        }
+        if(
+          isset($json["repositories"]["drupal"]) &&
+          $key != "drupal" &&
+          isset($value["url"]) &&
+          $value["url"] == "https://packages.drupal.org/8"
+        ){
+          unset($json["repositories"][$key]);
+        }
+      }
+      
       $projectConfig = JsonFile::encode($json);
       file_put_contents($savePath, $projectConfig);
     }else{
