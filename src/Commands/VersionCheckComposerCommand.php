@@ -154,6 +154,13 @@ class VersionCheckComposerCommand extends BaseCommand{
     }
 
     switch ($type){
+      case "composer-patches":
+        if(!defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
+          exit(1);
+        }else{
+          exit(0);
+        }
+      break;
       case "current":
         print $versionInfo["current"];
       break;
