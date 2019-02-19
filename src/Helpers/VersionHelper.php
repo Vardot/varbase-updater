@@ -3,7 +3,44 @@
 namespace vardot\Composer\Helpers;
 
 class VersionHelper{
-  public static function getVersionInfo($packages, $updateConfig) {
+  public static function getLatestVersionInfo($metaData) {
+    $tags = [];
+    $latestTags = [];
+    $versionsArray = [];
+    if(isset($metaData["package"])){
+      $versionsArray = $metaData["package"]["versions"];
+    }else{
+      return $latestTags;
+    }
+
+    if($versionsArray && sizeof($versionsArray)){
+      foreach ($versionsArray as $version => $meta) {
+        if(preg_match('/\d+\.\d+.\d+/', $version)){
+          $numbers = [];
+          preg_match('/(\d+\.\d+).(\d+)/', $version, $numbers);
+          if(sizeof($numbers)){
+            $major = $numbers[1];
+            $minor = $numbers[2];
+            if(isset($tags[$major])){
+              if($tags[$major] < $minor){
+                $tags[$major] = $minor;
+              }
+            }else{
+              $tags[$major] = $minor;
+            }
+          }
+        }
+      }
+
+      foreach ($tags as $major => $minor) {
+        $latestTags[$major.".".$minor] = $major.".".$minor;
+      }
+
+    }
+    return $latestTags;
+  }
+
+  public static function getVersionInfo($packages, $updateConfig, $latestVersions) {
     $profile = null;
     if(!$updateConfig || !$packages){
       return null;
@@ -33,6 +70,14 @@ class VersionHelper{
       if (isset($conf["from"]) && isset($conf["to"])) {
         $conf["from"] = preg_replace("/\*/", ".*", $conf["from"]);
         $conf["to"] = preg_replace("/\*/", ".*", $conf["to"]);
+
+        foreach($latestVersions as $key => $value){
+          if(preg_match('/' . $conf['to'] . '/', $key)){
+            $conf["to"] = $key;
+            break;
+          }
+        }
+        
         if(preg_match('/' . $conf['to'] . '/', $profileVersion)){
           continue;
         }
