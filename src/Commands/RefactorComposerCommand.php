@@ -162,7 +162,18 @@ class RefactorComposerCommand extends BaseCommand{
     $error = json_last_error();
     $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
 
-    $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig);
+    $varbaseMetaData = [];
+    $composerProjectJsonUrl = "https://packagist.org/packages/vardot/varbase.json";
+    $filename = uniqid(sys_get_temp_dir().'/') . ".json";
+    $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
+    $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
+
+    if(file_exists($filename)){
+      $varbaseMetaData = JsonFile::parseJson(file_get_contents($filename), $filename);
+    }
+
+    $latestTags = VersionHelper::getLatestVersionInfo($varbaseMetaData);
+    $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig, $latestTags);
 
     $composerProjectJsonUrl = $updateConfig["composer-project-json-url"];
     $filename = uniqid(sys_get_temp_dir().'/') . ".json";
@@ -221,13 +232,23 @@ class RefactorComposerCommand extends BaseCommand{
       if (isset($conf["from"]) && isset($conf["to"])) {
         $conf["from"] = preg_replace("/\*/", ".*", $conf["from"]);
         $conf["to"] = preg_replace("/\*/", ".*", $conf["to"]);
+
+        foreach($latestTags as $key => $value){
+          if(preg_match('/' . $conf['to'] . '/', $key)){
+            $conf["to"] = $key;
+            break;
+          }
+        }
+
         if(preg_match('/' . $conf['to'] . '/', $profileVersion)){
           continue;
         }
         if(preg_match('/' . $conf["from"] . '/', $profileVersion)){
+          
           $profileLinkConstraint = new Constraint(">=", $conf["to"]);
           $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
           $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to"]);
+
           $requiredPackageLinks = [];
           $requiredPackageLinks[$updateConfig['package']] = $profileLink;
 
@@ -407,6 +428,33 @@ class RefactorComposerCommand extends BaseCommand{
         ];
         $json["extra"]["installer-paths"] = $json["extra"]["installer-paths"] + $extraLibsArray;
       }
+
+      if(isset($json["repositories"]["packagist.org"])){
+        unset($json["repositories"]["packagist.org"]);
+      }
+
+      if(isset($json["version"])){
+        unset($json["version"]);
+      }
+
+      if(isset($json["version_normalized"])){
+        unset($json["version_normalized"]);
+      }
+
+      foreach ($json["repositories"] as $key => $value) {
+        if($key == "packagist.org"){
+          unset($json["repositories"][$key]);
+        }
+        if(
+          isset($json["repositories"]["drupal"]) &&
+          $key != "drupal" &&
+          isset($value["url"]) &&
+          $value["url"] == "https://packages.drupal.org/8"
+        ){
+          unset($json["repositories"][$key]);
+        }
+      }
+
       $projectConfig = JsonFile::encode($json);
       file_put_contents($savePath, $projectConfig);
     }else{
@@ -423,11 +471,7 @@ class RefactorComposerCommand extends BaseCommand{
 
       foreach ($latestRequires as $projectName => $projectPackageLink) {
         if($projectName == $updateConfig['package']) continue;
-        if(!isset($profilePackageRequires[$projectName]) && !isset($requiredPackageLinks[$projectName])){
-          $requiredPackageLinks[$projectName] = $projectPackageLink;
-        }else if(isset($requiredPackageLinks[$projectName])){
-          $requiredPackageLinks[$projectName] = $projectPackageLink;
-        }
+        $requiredPackageLinks[$projectName] = $projectPackageLink;
       }
 
       foreach ($crucialPackages as $key => $version) {
@@ -458,6 +502,28 @@ class RefactorComposerCommand extends BaseCommand{
 
       if(isset($json["repositories"]["packagist.org"])){
         unset($json["repositories"]["packagist.org"]);
+      }
+
+      if(isset($json["version"])){
+        unset($json["version"]);
+      }
+
+      if(isset($json["version_normalized"])){
+        unset($json["version_normalized"]);
+      }
+
+      foreach ($json["repositories"] as $key => $value) {
+        if($key == "packagist.org"){
+          unset($json["repositories"][$key]);
+        }
+        if(
+          isset($json["repositories"]["drupal"]) &&
+          $key != "drupal" &&
+          isset($value["url"]) &&
+          $value["url"] == "https://packages.drupal.org/8"
+        ){
+          unset($json["repositories"][$key]);
+        }
       }
 
       $latestProjectConfig = JsonFile::encode($json);
