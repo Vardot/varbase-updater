@@ -138,6 +138,7 @@ class VersionCheckComposerCommand extends BaseCommand{
     $localRepository = $repositoryManager->getLocalRepository();
     $packages = $localRepository->getPackages();
     $paths = $this->getPaths($composer->getPackage());
+    $downloader = new RemoteFilesystem($this->getIO(), $this->getComposer()->getConfig());
     $updateConfigPath = $paths["pluginPath"] . "config/update-config.json";
     $extraConfig = [];
     if(file_exists($paths["composerPath"] . "update-config.json")){
@@ -147,7 +148,18 @@ class VersionCheckComposerCommand extends BaseCommand{
     $error = json_last_error();
     $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
 
-    $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig);
+    $varbaseMetaData = [];
+    $composerProjectJsonUrl = "https://packagist.org/packages/vardot/varbase.json";
+    $filename = uniqid(sys_get_temp_dir().'/') . ".json";
+    $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
+    $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
+
+    if(file_exists($filename)){
+      $varbaseMetaData = JsonFile::parseJson(file_get_contents($filename), $filename);
+    }
+
+    $latestTags = VersionHelper::getLatestVersionInfo($varbaseMetaData);
+    $versionInfo = VersionHelper::getVersionInfo($packages, $updateConfig, $latestTags);
 
     if(!$versionInfo){
       return;
