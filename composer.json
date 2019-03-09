@@ -1,19 +1,43 @@
 {
   "name": "vardot/varbase-updater",
+  "description": "A set of scripts and tools that will help you to update to the newer versions of Varbase.",
   "type": "composer-plugin",
-  "description": "Varbase Updater",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Vardot",
+      "homepage": "https://github.com/vardot",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/vardot/varbase-updater/issues",
+    "source": "https://github.com//vardot/varbase-updater"
+  },
   "require": {
-      "composer-plugin-api": "^1.1",
-      "symfony/yaml": "^3.1"
+    "composer-plugin-api": "^1.1",
+    "symfony/yaml": "^3.1"
   },
   "extra": {
-      "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
+    "_readme": [
+      "NOTICE: We're now using composer patches from Vardot repository to suggest",
+      "several fixes and better handling of patches in your Drupal project.",
+      "You'll notice that we have included (https://github.com/vardot/composer-patches)",
+      "in this composer.json repositories. This will replace the original",
+      "library (cweagans/composer-patches) with our own from (vardot/composer-patches).",
+      "See https://github.com/cweagans/composer-patches/pull/243 and more details",
+      "on our changes on the composer-patches package. Once our changes get merged,",
+      "we will revert to using (cweagans/composer-patches) without this override."
+    ],
+    "branch-alias": {
+      "dev-8.x-1.x": "8.1.x-dev"
+    },
+    "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
   },
   "autoload": {
     "psr-4": {"vardot\\Composer\\": "src"}
   },
   "bin":[
     "scripts/update/update-varbase.sh"
-  ],
-  "license": "GPL-2.0-or-later"
+  ]
 }
