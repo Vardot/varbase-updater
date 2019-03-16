@@ -349,14 +349,24 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
               $parentExtra = $parentPackage->getExtra();
               if (isset($parentExtra['patches'])) {
                 if(isset($parentExtra['patches'][$package->getName()])){
-                  if(isset($rootPackageExtras['patches-ignore'])) {
-                    if(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()])){
-                      if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
-                        $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = $parentExtra['patches'][$package->getName()];
+                  foreach($parentExtra['patches'][$package->getName()] as $key => $url){
+                    if($url == $event->getUrl()){
+                      if(isset($rootPackageExtras['patches-ignore'])) {
+                        if(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()])){
+                          if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
+                            $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
+                            $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                          }elseif(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
+                            if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key])){
+                              $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                            }
+                          }
+                        }else{
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()] = array();
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                        }
                       }
-                    }else{
-                      $rootPackageExtras['patches-ignore'][$parentPackage->getName()] = array();
-                      $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = $parentExtra['patches'][$package->getName()];
                     }
                   }
                 }
@@ -378,7 +388,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
 
           }else{
             $io->write("<warning>Logging patch to the failed-patches.txt file instead of removing it.</warning>", true);
-            self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);  
+            self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
           }
         }
       }else{
