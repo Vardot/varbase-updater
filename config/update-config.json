@@ -11,7 +11,7 @@
   },
   "8.4.28": {
     "from": "8.4.28",
-    "to": "8.6.4",
+    "to": "8.6.*",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
@@ -32,7 +32,7 @@
   },
   "8.5.*": {
     "from": "8.5.*",
-    "to": "8.6.4",
+    "to": "8.6.*",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",

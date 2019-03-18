@@ -115,9 +115,6 @@ get_file($base_path . "scripts/update/update-varbase.sh", getcwd().'/scripts/upd
 get_file($base_path . "scripts/update/version-check.php", getcwd().'/scripts/update/', 'version-check.php');
 get_file($base_path . "scripts/update/update-config.json", getcwd().'/scripts/update/', 'update-config.json');
 //only download them if they don't exist
-if (!file_exists(getcwd().'/scripts/update/tags.json')) {
-    get_file($base_path . "scripts/update/tags.json", getcwd().'/scripts/update/', 'tags.json');
-}
 if (!file_exists(getcwd().'/drush/policy.drush.inc')) {
     get_file($base_path . "drush/policy.drush.inc", getcwd().'/drush/', 'policy.drush.inc');
 }

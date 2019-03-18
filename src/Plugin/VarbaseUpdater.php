@@ -60,17 +60,10 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
    */
   public static function getSubscribedEvents()
   {
-    $events = array(
-      // to run *after* composer-patches plugin we use 11 as priority.
-      PackageEvents::POST_PACKAGE_INSTALL => array('handlePackageTags', 11),
-      PackageEvents::POST_PACKAGE_UPDATE => array('handlePackageTags', 11)
-    );
+    $events = array();
 
     if(defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
       $events[PatchEvents::PATCH_APPLY_ERROR] = array('handlePackagePatchError', 11);
-    }
-    if(defined('cweagans\Composer\PatchEvents::PRE_PATCH_APPLY')){
-      $events[PatchEvents::PRE_PATCH_APPLY] = array('handlePackagePatchTags', 11);
     }
 
     return $events;
@@ -181,56 +174,6 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       return $package;
   }
 
-  public function handlePackageTags(PackageEvent $event) {
-    $tagsPath = $this->getDrupalRoot(getcwd(), "") . "tags.json";
-    if(!file_exists($tagsPath)){
-      $tagsPath = $this->getDrupalRoot(dirname(__FILE__), "../../") . "config/tags.json";
-    }
-    if(!file_exists($tagsPath)) return;
-
-    $installedPackage = $this->getPackageFromOperation($event->getOperation());
-    $loader = new JsonLoader(new ArrayLoader());
-    $configPath = $this->getDrupalRoot(getcwd(), "") . "composer.json";
-
-    $config = JsonFile::parseJson(file_get_contents($configPath), $configPath);
-    if(!isset($config['version'])){
-      $config['version'] = "0.0.0"; //dummy version just to handle UnexpectedValueException
-    }
-    $config = JsonFile::encode($config);
-    $package = $loader->load($config);
-
-    $tagsFile = file_get_contents($tagsPath);
-    $tags = json_decode($tagsFile, true);
-
-    $paths = $this->getPaths($package);
-
-    $modulePath = $paths["contribModulesPath"];
-    $themePath = $paths["contribThemesPath"];
-
-    foreach ($tags as $name => $constraint) {
-      if($name != $installedPackage->getName()) continue;
-      $version = $constraint;
-      $projectName = preg_replace('/.*\//', "", $name);
-      if(preg_match('/\#/', $version)){
-        $commitId = preg_replace('/.*\#/', "", $version);
-        $result = [];
-        print $projectName . ": \n";
-        if(file_exists($modulePath . $projectName)){
-          exec('cd ' . $modulePath . $projectName . '; git checkout ' . $commitId, $result);
-          foreach ($result as $line) {
-              print($line . "\n");
-          }
-        }else if(file_exists($themePath . $projectName)){
-          exec('cd ' . $themePath . $projectName . '; git checkout ' . $commitId, $result);
-          foreach ($result as $line) {
-              print($line . "\n");
-          }
-        }
-      }
-    }
-
-  }
-
   /**
    * Writes a patch report to the target directory.
    *
@@ -269,6 +212,10 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     $manager = $event->getComposer()->getInstallationManager();
     $installPath = $manager->getInstaller($package->getType())->getInstallPath($package);
     $patchUrl = $event->getUrl();
+
+    $repositoryManager = $composer->getRepositoryManager();
+    $localRepository = $repositoryManager->getLocalRepository();
+    $packages = $localRepository->getPackages();
 
     // Set up a downloader.
     $downloader = new RemoteFilesystem($event->getIO(), $event->getComposer()->getConfig());
@@ -395,63 +342,60 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
           }
         }else{
           $io->write("<warning>Couldn't find the patch inside root composer.json or patches file, probably it's provided from dependencies?</warning>", true);
-          $io->write("<warning>Logging patch to the failed-patches.txt file instead of removing it.</warning>", true);
-          self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+          $answer = $io->ask("<info>Would you like to add this patch to the patches ignore list? (yes)</info>", "yes");
+
+          if(preg_match("/yes/i", $answer)){
+            foreach ($packages as $parentPackage) {
+              $parentExtra = $parentPackage->getExtra();
+              if (isset($parentExtra['patches'])) {
+                if(isset($parentExtra['patches'][$package->getName()])){
+                  foreach($parentExtra['patches'][$package->getName()] as $key => $url){
+                    if($url == $event->getUrl()){
+                      if(isset($rootPackageExtras['patches-ignore'])) {
+                        if(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()])){
+                          if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
+                            $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
+                            $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                          }elseif(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
+                            if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key])){
+                              $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                            }
+                          }
+                        }else{
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()] = array();
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
+                          $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            $rootPackage->setExtra($rootPackageExtras);
+            $dumper = new ArrayDumper();
+            $json = $dumper->dump($rootPackage);
+            $json["prefer-stable"] = true;
+            $json = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+            $rootFile = $this->getDrupalRoot(getcwd(), "") . "composer.json";
+            if(file_put_contents($rootFile, $json)){
+              $io->write('<info>Root composer.json is saved successfully.</info>');
+            }else{
+              $io->write('<error>Couldn\'t save the root composer.json.</error>');
+              self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+            }
+
+          }else{
+            $io->write("<warning>Logging patch to the failed-patches.txt file instead of removing it.</warning>", true);
+            self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+          }
         }
       }else{
         self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
       }
     }else{
         self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
-    }
-  }
-
-  public function handlePackagePatchTags(PatchEvent $event) {
-    $tagsPath = $this->getDrupalRoot(getcwd(), "") . "tags.json";
-    if(!file_exists($tagsPath)){
-      $tagsPath = $this->getDrupalRoot(dirname(__FILE__), "../../") . "config/tags.json";
-    }
-    if(!file_exists($tagsPath)) return;
-
-    $installedPackage = $event->getPackage();
-
-    $loader = new JsonLoader(new ArrayLoader());
-    $configPath = $this->getDrupalRoot(getcwd(), "") . "composer.json";
-    $config = JsonFile::parseJson(file_get_contents($configPath), $configPath);
-    if(!isset($config['version'])){
-      $config['version'] = "0.0.0"; //dummy version just to handle UnexpectedValueException
-    }
-    $config = JsonFile::encode($config);
-    $package = $loader->load($config);
-
-    $tagsFile = file_get_contents($tagsPath);
-    $tags = json_decode($tagsFile, true);
-
-    $paths = $this->getPaths($package);
-
-    $modulePath = $paths["contribModulesPath"];
-    $themePath = $paths["contribThemesPath"];
-
-    foreach ($tags as $name => $constraint) {
-      if($name != $installedPackage->getName()) continue;
-      $version = $constraint;
-      $projectName = preg_replace('/.*\//', "", $name);
-      if(preg_match('/\#/', $version)){
-        $commitId = preg_replace('/.*\#/', "", $version);
-        $result = [];
-        print $projectName . ": \n";
-        if(file_exists($modulePath . $projectName)){
-          exec('cd ' . $modulePath . $projectName . '; git checkout ' . $commitId, $result);
-          foreach ($result as $line) {
-              print($line . "\n");
-          }
-        }else if(file_exists($themePath . $projectName)){
-          exec('cd ' . $themePath . $projectName . '; git checkout ' . $commitId, $result);
-          foreach ($result as $line) {
-              print($line . "\n");
-          }
-        }
-      }
     }
   }
 }
