@@ -20,7 +20,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-8.x-1.x": "8.1.x-dev"
+      "dev-1.x": "1.x-dev"
     },
     "class": "vardot\\Composer\\Plugin\\VarbaseUpdater"
   },
