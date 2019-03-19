@@ -4,7 +4,7 @@ function clear_stdin(){
 }
 
 BASEDIR=$(pwd);
-ERRORLOG=${BASEDIR}/.update-error-log;
+ERRORLOG=${BASEDIR}/varbase_update_error.log;
 DRUPALPATH='docroot';
 if [ -d "${BASEDIR}/web" ]; then
   DRUPALPATH='web';
@@ -114,7 +114,7 @@ cleanup(){
       rm -rf ${BASEDIR}/vendor/cweagans/composer-patches;
     fi
   fi
-  
+
   if [ -d ${BASEDIR}/${DRUPALPATH}/vendor ]; then
     rm -rf ${BASEDIR}/${DRUPALPATH}/vendor;
   fi
