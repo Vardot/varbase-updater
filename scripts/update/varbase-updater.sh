@@ -273,6 +273,7 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
 
   echo -e "$(tput setaf 2)Updating the database for latest changes.$(tput sgr 0)";
   echo -e "$(tput setaf 2)Updating the database for latest changes.$(tput sgr 0)" >> ${ERRORLOG};
+  $DRUSH  entity-updates --yes;
   $DRUSH  updb --yes --strict=0 1> >(tee -a ${ERRORLOG} >&1) 2> >(tee -a ${ERRORLOG} >&2);
   result="$?";
   if [ "$result" -ne 0 ]; then
