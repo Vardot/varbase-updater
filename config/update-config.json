@@ -11,15 +11,16 @@
   },
   "8.4.28": {
     "from": "8.4.28",
-    "to": "8.6.*",
+    "to": "8.6.3",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
         "drupal/entity_browser": "2.0",
         "drupal/video_embed_field": "2.0",
+        "drupal/varbase_media": "6.2",
         "drupal/media_entity": "2.0-beta3",
-        "drupal/panelizer": "4.1",
-        "vardot/entity_browser_generic_embed": "8.1.x-dev"
+        "vardot/entity_browser_generic_embed": "8.1.x-dev",
+        "drupal/panelizer": "4.1"
       }
     },
     "skip":[
@@ -32,15 +33,16 @@
   },
   "8.5.*": {
     "from": "8.5.*",
-    "to": "8.6.*",
+    "to": "8.6.3",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
         "drupal/entity_browser": "2.0",
         "drupal/video_embed_field": "2.0",
+        "drupal/varbase_media": "6.2",
         "drupal/media_entity": "2.0-beta3",
-        "drupal/panelizer": "4.1",
-        "vardot/entity_browser_generic_embed": "8.1.x-dev"
+        "vardot/entity_browser_generic_embed": "8.1.x-dev",
+        "drupal/panelizer": "4.1"
       }
     },
     "skip":[
