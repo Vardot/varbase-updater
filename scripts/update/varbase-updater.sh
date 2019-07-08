@@ -131,7 +131,7 @@ cleanup(){
     rm -rf ${BASEDIR}/vendor/vardot/varbase-updater/config/.download-before-update;
   fi
 
-  chmod -R gu+rwx ${BASEDIR}/${DRUPALPATH};
+  sudo chmod -R gu+rwx ${BASEDIR}/${DRUPALPATH};
 
   composer dump-autoload;
 }
