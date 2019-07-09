@@ -21,7 +21,11 @@ cat << "EOF"
  |     | |   _   ||   |  | ||       ||   |
   |___|  |__| |__||___|  |_||_______||___|
 EOF
+echo "";
 echo "$(tput setaf 4)Varbase Updater$(tput sgr 0)";
+echo "";
+echo "$(tput setaf 4)Project root           : ${BASEDIR} $(tput sgr 0)";
+echo "$(tput setaf 4)Drupal root            : ${DRUPALPATH} $(tput sgr 0)";
 echo "";
 clear_stdin;
 echo "$(tput setaf 1)Please choose your Drupal installation folder. Type the folder name or hit enter to choose the default one: ($DRUPALPATH): $(tput sgr 0)";
