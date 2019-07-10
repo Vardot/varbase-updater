@@ -1,6 +1,9 @@
 #!/bin/bash
+
+# Varbase Updater
+
 function clear_stdin(){
-    while read -e -t 1; do : ; done
+  while read -e -t 1; do : ; done
 }
 
 BASEDIR=$(pwd);

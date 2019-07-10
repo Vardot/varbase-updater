@@ -1,7 +1,7 @@
 {
   "profile": "varbase",
   "package": "vardot/varbase",
-   "8.4.*": {
+  "8.4.*": {
     "from": "8.4.*",
     "to": "8.4.28"
   },
@@ -29,6 +29,10 @@
   },
   "8.5.*": {
     "from": "8.5.*",
+    "to": "8.5.5"
+  },
+  "8.5.5": {
+    "from": "8.5.5",
     "to": "8.6.3",
     "packages": {
       "crucial": {
@@ -62,7 +66,7 @@
   },
   "8.7.*": {
     "from": "8.7.*",
-    "to": "8.7.*"
-  },
-  "composer-project-json-url": "https://raw.githubusercontent.com/Vardot/varbase-project/8.7.x/composer.json"
+    "to": "8.7.*",
+    "composer-project-json-url": "latest"
+  }
 }

@@ -26,8 +26,10 @@ use Composer\Installer\PackageEvents;
 use Composer\Util\RemoteFilesystem;
 use Composer\Util\ProcessExecutor;
 
-
-class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capable{
+/**
+ * Varbase Updater.
+ */
+class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capable {
 
   /**
    * @var Composer $composer
@@ -40,29 +42,29 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   protected $io;
 
   /**
-   * Plugin activataion
+   * Plugin activate.
    *
    * @param Composer $composer
    * @param IOInterface $io
    */
-  public function activate(Composer $composer, IOInterface $io)
-  {
-      $this->composer = $composer;
-      $this->io = $io;
+  public function activate(Composer $composer, IOInterface $io) {
+    $this->composer = $composer;
+    $this->io = $io;
 
-      if(!defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
-        $io->write("<info>Please install composer-patches package from Vardot's repository to catch and handle errors when applying patches.</info>");
-      }
+    if (!defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')) {
+      $io->write("<info>Please install composer-patches package from Vardot's repository to catch and handle errors when applying patches.</info>");
+    }
   }
 
   /**
+   * Get subscribed events.
+   *
    * Returns an array of event names this subscriber wants to listen to.
    */
-  public static function getSubscribedEvents()
-  {
+  public static function getSubscribedEvents() {
     $events = array();
 
-    if(defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')){
+    if (defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')) {
       $events[PatchEvents::PATCH_APPLY_ERROR] = array('handlePackagePatchError', 11);
     }
 
@@ -71,17 +73,17 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
   }
 
   /**
+   * Get Capabilities.
+   *
    * Return a list of plugin capabilities.
    *
    * @return array
    */
-  public function getCapabilities()
-  {
-      return array(
-          'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\Commands\CommandsProvider'
-      );
+  public function getCapabilities() {
+    return array(
+        'Composer\Plugin\Capability\CommandProvider' => 'vardot\Composer\Commands\CommandsProvider'
+    );
   }
-
 
   /**
    * Get the Drupal root directory.
@@ -96,6 +98,12 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     return $project_root . '/' . $rootPath;
   }
 
+  /**
+   * Get Paths.
+   *
+   * @param type $package
+   * @return string
+   */
   protected function getPaths($package) {
     $paths = [];
     $projectExtras = $package->getExtra();
@@ -103,9 +111,11 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     $paths["composerPath"] = $this->getDrupalRoot(getcwd(), "");
     $paths["pluginPath"] = $this->getDrupalRoot($scriptPath, "../../");
     $paths["rootPath"] = "docroot";
-    if(isset($projectExtras["install-path"])){
+
+    if (isset($projectExtras["install-path"])) {
       $paths["rootPath"] = $projectExtras["install-path"];
     }
+
     $paths["contribModulesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/modules/contrib/";
     $paths["customModulesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/modules/custom/";
     $paths["contribThemesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/themes/contrib/";
@@ -113,35 +123,43 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     $paths["librariesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/libraries/";
     $paths["profilesPath"] = $this->getDrupalRoot(getcwd(), $paths["rootPath"]) . "/profiles/";
 
-    if(isset($projectExtras["installer-paths"])){
-      foreach($projectExtras["installer-paths"] as $path => $types){
-        foreach($types as $type){
-          if($type == "type:drupal-module"){
+    if (isset($projectExtras["installer-paths"])) {
+      foreach ($projectExtras["installer-paths"] as $path => $types) {
+        foreach ($types as $type) {
+          if ($type == "type:drupal-module") {
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["contribModulesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
           }
-          if($type == "type:drupal-custom-module"){
+
+          if ($type == "type:drupal-custom-module") {
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["customModulesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
           }
-          if($type == "type:drupal-theme"){
+
+          if ($type == "type:drupal-theme") {
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["contribThemesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
           }
-          if($type == "type:drupal-custom-theme"){
+
+          if ($type == "type:drupal-custom-theme") {
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["customThemesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
           }
-          if($type == "type:drupal-profile"){
+
+          if ($type == "type:drupal-profile") {
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["profilesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
           }
-          if($type == "type:drupal-library" || $type == "type:bower-asset" || $type == "type:npm-asset" ){
+
+          if ($type == "type:drupal-library"
+            || $type == "type:bower-asset"
+            || $type == "type:npm-asset" ) {
+
             $typePath = preg_replace('/\{\$.*\}$/', "", $path);
             $paths["librariesPath"] = $this->getDrupalRoot(getcwd(), "") . $typePath;
             continue;
@@ -162,16 +180,17 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
    *
    * @todo Will this method ever get something other than an InstallOperation or UpdateOperation?
    */
-  protected function getPackageFromOperation($operation)
-  {
-      if ($operation instanceof InstallOperation) {
-          $package = $operation->getPackage();
-      } elseif ($operation instanceof UpdateOperation) {
-          $package = $operation->getTargetPackage();
-      } else {
-          throw new \Exception('Unknown operation: ' . get_class($operation));
-      }
-      return $package;
+  protected function getPackageFromOperation($operation) {
+    if ($operation instanceof InstallOperation) {
+      $package = $operation->getPackage();
+    }
+    elseif ($operation instanceof UpdateOperation) {
+      $package = $operation->getTargetPackage();
+    }
+    else {
+      throw new \Exception('Unknown operation: ' . get_class($operation));
+    }
+    return $package;
   }
 
   /**
@@ -189,9 +208,11 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     }
 
     $reason = "Failed to apply patch";
-    if($isApplied){
+
+    if ($isApplied) {
       $reason = "Patch already applied";
     }
+
     $output = "Patch: " . $patchUrl . "\n";
     $output .= "\t Reason: " . $reason . "\n";
     $output .= "\t Description: " . $description . "\n";
@@ -200,6 +221,11 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
     file_put_contents($logFile, $output, FILE_APPEND | LOCK_EX);
   }
 
+  /**
+   * Handle Package Patch Error.
+   *
+   * @param PatchEvent $event
+   */
   public function handlePackagePatchError(PatchEvent $event) {
     $logPath = $this->getDrupalRoot(getcwd(), "");
 
@@ -222,7 +248,8 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
 
     if (file_exists($patchUrl)) {
       $filename = realpath($patchUrl);
-    } else {
+    }
+    else {
       // Generate random (but not cryptographically so) filename.
       $filename = uniqid(sys_get_temp_dir().'/') . ".patch";
 
@@ -262,7 +289,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       }
     }
 
-    if($isApplied){
+    if ($isApplied) {
 
       $io->write([
           "<warning>Patch: " . $event->getUrl() . "</warning>",
@@ -273,7 +300,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
 
       $answer = $io->ask("<info>Would you like to remove it form your composer.json patches list? (yes)</info>", "yes");
 
-      if(preg_match("/yes/i", $answer)){
+      if (preg_match("/yes/i", $answer)) {
         $io->write("<info>Removing patch: " . $event->getUrl() . "</info>", true);
         $patches = [];
         $patchesFile = "";
@@ -285,6 +312,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
           $patchesFile = file_get_contents($rootPackageExtras['patches-file']);
           $patchesFile = json_decode($patchesFile, TRUE);
           $error = json_last_error();
+
           if ($error != 0) {
             $io->write('<error>There was an error reading the patches file.</error>');
           }
@@ -292,25 +320,27 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
           if (isset($patchesFile['patches'])) {
             $patches = $patchesFile['patches'];
           }
-        }else{
+        }
+        else {
           //shouldn't reach here!
           $io->write('<warning>Hmmm, no patches supplied!</warning>');
         }
 
         $found = false;
-        if(isset($patches[$package->getName()])){
-          foreach($patches[$package->getName()] as $key => $url){
-            if($url == $event->getUrl()){
+        if (isset($patches[$package->getName()])) {
+          foreach ($patches[$package->getName()] as $key => $url) {
+            if ($url == $event->getUrl()) {
               $found = true;
               unset($patches[$package->getName()][$key]);
             }
           }
-          if(!sizeof($patches[$package->getName()])){
+
+          if (!sizeof($patches[$package->getName()])) {
             unset($patches[$package->getName()]);
           }
         }
 
-        if($found){
+        if ($found) {
           $io->write('<info>Saving changes.</info>');
           if (isset($rootPackageExtras['patches'])) {
             $rootPackageExtras['patches'] = $patches;
@@ -320,48 +350,56 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
             $json["prefer-stable"] = true;
             $json = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
             $rootFile = $this->getDrupalRoot(getcwd(), "") . "composer.json";
-            if(file_put_contents($rootFile, $json)){
+
+            if (file_put_contents($rootFile, $json)) {
               $io->write('<info>Root composer.json is saved successfully.</info>');
-            }else{
+            }
+            else {
               $io->write('<error>Couldn\'t save the root composer.json.</error>');
               self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
             }
-          } elseif ($rootPackageExtras['patches-file']) {
+          }
+          elseif ($rootPackageExtras['patches-file']) {
             $patchesFile["patches"] = $patches;
             $patchesFile = json_encode($patchesFile, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
-            if(file_put_contents($rootPackageExtras['patches-file'], $patchesFile)){
+            if (file_put_contents($rootPackageExtras['patches-file'], $patchesFile)) {
               $io->write('<info>Patches file is saved successfully.</info>');
-            }else{
+            }
+            else {
               $io->write('<error>Couldn\'t save the patches file.</error>');
               self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
             }
-          } else {
+          }
+          else {
             //shouldn't reach here!
             $io->write("<warning>Can't save, no patches supplied!</warning>");
             self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
           }
-        }else{
+        }
+        else {
           $io->write("<warning>Couldn't find the patch inside root composer.json or patches file, probably it's provided from dependencies?</warning>", true);
           $answer = $io->ask("<info>Would you like to add this patch to the patches ignore list? (yes)</info>", "yes");
 
-          if(preg_match("/yes/i", $answer)){
+          if (preg_match("/yes/i", $answer)) {
             foreach ($packages as $parentPackage) {
               $parentExtra = $parentPackage->getExtra();
               if (isset($parentExtra['patches'])) {
-                if(isset($parentExtra['patches'][$package->getName()])){
-                  foreach($parentExtra['patches'][$package->getName()] as $key => $url){
-                    if($url == $event->getUrl()){
-                      if(isset($rootPackageExtras['patches-ignore'])) {
-                        if(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()])){
-                          if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
+                if (isset($parentExtra['patches'][$package->getName()])) {
+                  foreach ($parentExtra['patches'][$package->getName()] as $key => $url){
+                    if ($url == $event->getUrl()) {
+                      if (isset($rootPackageExtras['patches-ignore'])) {
+                        if (isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()])) {
+                          if (!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])) {
                             $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
                             $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
-                          }elseif(isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])){
-                            if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key])){
+                          }
+                          elseif (isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()])) {
+                            if(!isset($rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key])) {
                               $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
                             }
                           }
-                        }else{
+                        }
+                        else {
                           $rootPackageExtras['patches-ignore'][$parentPackage->getName()] = array();
                           $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()] = array();
                           $rootPackageExtras['patches-ignore'][$parentPackage->getName()][$package->getName()][$key] = $url;
@@ -379,23 +417,27 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
             $json["prefer-stable"] = true;
             $json = json_encode($json, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
             $rootFile = $this->getDrupalRoot(getcwd(), "") . "composer.json";
-            if(file_put_contents($rootFile, $json)){
+            if (file_put_contents($rootFile, $json)) {
               $io->write('<info>Root composer.json is saved successfully.</info>');
-            }else{
+            }
+            else {
               $io->write('<error>Couldn\'t save the root composer.json.</error>');
               self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
             }
 
-          }else{
+          }
+          else {
             $io->write("<warning>Logging patch to the failed-patches.txt file instead of removing it.</warning>", true);
             self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
           }
         }
-      }else{
+      }
+      else {
         self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
       }
-    }else{
-        self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
+    }
+    else{
+      self::writePatchReport($package->getName(), $installPath, $event->getUrl(), $event->getDescription(), $isApplied, $logPath);
     }
   }
 }
