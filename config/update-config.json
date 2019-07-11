@@ -67,6 +67,6 @@
   "8.7.*": {
     "from": "8.7.*",
     "to": "8.7.*",
-    "composer-project-json-url": "latest"
+    "composer-project-json-url": "8.7.0"
   }
 }

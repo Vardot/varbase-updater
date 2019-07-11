@@ -264,7 +264,7 @@ class RefactorComposerCommand extends BaseCommand{
       if (isset($conf["composer-project-json-url"])) {
         if ($conf["composer-project-json-url"] == 'latest') {
 
-          // Get the latest release for Varbase Updater.
+          // Get the latest release for Varbase project.
           $varbaseProjectTargetRelease = [];
           $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/vardot/varbase-project/releases/latest";
           $varbaseProjectTargetFilename = uniqid(sys_get_temp_dir().'/') . ".json";
