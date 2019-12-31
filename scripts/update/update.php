@@ -116,7 +116,7 @@ function get_file($url, $local_path, $newfilename) {
 
   // Get the latest release for Varbase Updater.
   $varbaseUpdaterLatestRelease = [];
-  $varbaseUpdaterJsonUrl = "https://api.github.com/repos/vardot/varbase-updater/releases/latest";
+  $varbaseUpdaterJsonUrl = "https://api.github.com/repos/vardot/varbase-updater/tags";
   $varbaseUpdaterFilename = uniqid(sys_get_temp_dir().'/') . ".json";
   get_file($varbaseUpdaterJsonUrl, $varbaseUpdaterFilename, $varbaseUpdaterFilename);
 
@@ -125,7 +125,7 @@ function get_file($url, $local_path, $newfilename) {
   }
 
   // Varbase Updater Latest release tag name.
-  $tagName = $varbaseUpdaterLatestRelease['tag_name'];
+  $tagName = $varbaseUpdaterLatestRelease[0]['name'];
 
   $base_path = "https://raw.githubusercontent.com/vardot/varbase-updater/" . $tagName . "/";
   get_file($base_path . "scripts/composer/VarbaseUpdate.php", getcwd().'/scripts/composer/', 'VarbaseUpdate.php');
