@@ -35,7 +35,7 @@ use vardot\Composer\Helpers\VersionHelper;
 /**
  * Refactor composer command.
  */
-class RefactorComposerCommand extends BaseCommand{
+class RefactorComposerCommand extends BaseCommand {
 
   /**
    * Configure.
@@ -150,7 +150,7 @@ class RefactorComposerCommand extends BaseCommand{
    * @param type $drupalPath
    * @return type
    */
-  public function array_merge_recursive_distinct(array &$array1, array &$array2, $drupalPath){
+  public function array_merge_recursive_distinct(array &$array1, array &$array2, $drupalPath) {
     $merged = $array1;
     foreach ($array2 as $key => &$value) {
       $newKey = preg_replace('/{\$drupalPath}/', $drupalPath, $key);
@@ -266,16 +266,16 @@ class RefactorComposerCommand extends BaseCommand{
 
           // Get the latest release for Varbase project.
           $varbaseProjectTargetRelease = [];
-          $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/vardot/varbase-project/releases/latest";
+          $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
           $varbaseProjectTargetFilename = uniqid(sys_get_temp_dir().'/') . ".json";
-          get_file($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename, $varbaseProjectTargetFilename);
+          $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename, $varbaseProjectTargetFilename);
 
           if (file_exists($varbaseProjectTargetFilename)) {
             $varbaseProjectTargetRelease = JsonFile::parseJson(file_get_contents($varbaseProjectTargetFilename), $varbaseProjectTargetFilename);
           }
 
           // Varbase Project Latest release tag name.
-          $tagName = $varbaseProjectTargetRelease['tag_name'];
+          $tagName = $varbaseProjectTargetRelease[0]['name'];
 
           $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $tagName . "/composer.json";
         }
@@ -623,5 +623,36 @@ class RefactorComposerCommand extends BaseCommand{
       $latestProjectConfig = JsonFile::encode($json);
       file_put_contents($savePath, $latestProjectConfig);
     }
+  }
+  
+  /**
+   * Get file from URL
+   *
+   * @param type $url
+   * @param type $local_path
+   * @param type $newfilename
+   */
+  public function getFileFromURL($url, $local_path, $newfilename) {
+    $err_msg = '';
+    echo "Downloading $url";
+    echo "\n";
+    $out = fopen($local_path.$newfilename, "wrxb");
+    if ($out == FALSE){
+      print "File not opened.<br>";
+      exit;
+    }
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_FILE, $out);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_URL, $url);
+
+    curl_exec($ch);
+
+    curl_close($ch);
+    //fclose($handle);
+
   }
 }
