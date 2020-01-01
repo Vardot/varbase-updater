@@ -12,6 +12,7 @@ function get_file($url, $newfilename) {
 
   $ch = curl_init();
 
+  curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
   curl_setopt($ch, CURLOPT_FILE, $out);
   curl_setopt($ch, CURLOPT_HEADER, 0);
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
