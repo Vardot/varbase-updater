@@ -267,7 +267,7 @@ class RefactorComposerCommand extends BaseCommand {
           // Get the latest release for Varbase project.
           $varbaseProjectTargetRelease = [];
           $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
-          $varbaseProjectTargetFilename = uniqid(sys_get_temp_dir().'/') . ".json";
+          $varbaseProjectTargetFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
           $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename);
 
           if (file_exists($varbaseProjectTargetFilename)) {
@@ -629,7 +629,6 @@ class RefactorComposerCommand extends BaseCommand {
    * Get file from URL
    *
    * @param type $url
-   * @param type $local_path
    * @param type $newfilename
    */
   public function getFileFromURL($url, $newfilename) {

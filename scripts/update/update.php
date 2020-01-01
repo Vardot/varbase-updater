@@ -117,7 +117,7 @@ function get_file($url, $newfilename) {
   // Get the latest release for Varbase Updater.
   $varbaseUpdaterLatestRelease = [];
   $varbaseUpdaterJsonUrl = "https://api.github.com/repos/vardot/varbase-updater/tags";
-  $varbaseUpdaterFilename = uniqid(sys_get_temp_dir().'/') . ".json";
+  $varbaseUpdaterFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
   get_file($varbaseUpdaterJsonUrl, $varbaseUpdaterFilename);
 
   if (file_exists($varbaseUpdaterFilename)) {
@@ -128,18 +128,18 @@ function get_file($url, $newfilename) {
   $tagName = $varbaseUpdaterLatestRelease[0]['name'];
 
   $base_path = "https://raw.githubusercontent.com/vardot/varbase-updater/" . $tagName . "/";
-  get_file($base_path . "scripts/composer/VarbaseUpdate.php", getcwd().'/scripts/composer/', 'VarbaseUpdate.php');
-  get_file($base_path . "scripts/update/update-varbase.sh", getcwd().'/scripts/update/', 'update-varbase.sh');
-  get_file($base_path . "scripts/update/version-check.php", getcwd().'/scripts/update/', 'version-check.php');
-  get_file($base_path . "scripts/update/update-config.json", getcwd().'/scripts/update/', 'update-config.json');
+  get_file($base_path . "scripts/composer/VarbaseUpdate.php", getcwd().'/scripts/composer/VarbaseUpdate.php');
+  get_file($base_path . "scripts/update/update-varbase.sh", getcwd().'/scripts/update/update-varbase.sh');
+  get_file($base_path . "scripts/update/version-check.php", getcwd().'/scripts/update/version-check.php');
+  get_file($base_path . "scripts/update/update-config.json", getcwd().'/scripts/update/update-config.json');
 
   // Only download them if they don't exist.
   if (!file_exists(getcwd().'/drush/policy.drush.inc')) {
-    get_file($base_path . "drush/policy.drush.inc", getcwd().'/drush/', 'policy.drush.inc');
+    get_file($base_path . "drush/policy.drush.inc", getcwd().'/drush/policy.drush.inc');
   }
 
   if (!file_exists(getcwd().'/drush/README.md')) {
-    get_file($base_path . "drush/README.md", getcwd().'/drush/', 'README.md');
+    get_file($base_path . "drush/README.md", getcwd().'/drush/README.md');
   }
 
   chmod(getcwd().'/scripts/update/update-varbase.sh', 0755);
