@@ -1,10 +1,10 @@
 <?php
 
-function get_file($url, $local_path, $newfilename) {
+function get_file($url, $newfilename) {
   $err_msg = '';
   echo "Downloading $url";
   echo "\n";
-  $out = fopen($local_path.$newfilename, "wrxb");
+  $out = fopen($newfilename, "wrxb");
   if ($out == FALSE){
     print "File not opened.<br>";
     exit;
@@ -118,7 +118,7 @@ function get_file($url, $local_path, $newfilename) {
   $varbaseUpdaterLatestRelease = [];
   $varbaseUpdaterJsonUrl = "https://api.github.com/repos/vardot/varbase-updater/tags";
   $varbaseUpdaterFilename = uniqid(sys_get_temp_dir().'/') . ".json";
-  get_file($varbaseUpdaterJsonUrl, $varbaseUpdaterFilename, $varbaseUpdaterFilename);
+  get_file($varbaseUpdaterJsonUrl, $varbaseUpdaterFilename);
 
   if (file_exists($varbaseUpdaterFilename)) {
     $varbaseUpdaterLatestRelease = JsonFile::parseJson(file_get_contents($varbaseUpdaterFilename), $varbaseUpdaterFilename);

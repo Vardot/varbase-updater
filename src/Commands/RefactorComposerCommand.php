@@ -268,7 +268,7 @@ class RefactorComposerCommand extends BaseCommand {
           $varbaseProjectTargetRelease = [];
           $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
           $varbaseProjectTargetFilename = uniqid(sys_get_temp_dir().'/') . ".json";
-          $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename, $varbaseProjectTargetFilename);
+          $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename);
 
           if (file_exists($varbaseProjectTargetFilename)) {
             $varbaseProjectTargetRelease = JsonFile::parseJson(file_get_contents($varbaseProjectTargetFilename), $varbaseProjectTargetFilename);
@@ -632,11 +632,11 @@ class RefactorComposerCommand extends BaseCommand {
    * @param type $local_path
    * @param type $newfilename
    */
-  public function getFileFromURL($url, $local_path, $newfilename) {
+  public function getFileFromURL($url, $newfilename) {
     $err_msg = '';
     echo "Downloading $url";
     echo "\n";
-    $out = fopen($local_path.$newfilename, "wrxb");
+    $out = fopen($newfilename, "wrxb");
     if ($out == FALSE){
       print "File not opened.<br>";
       exit;
