@@ -72,12 +72,12 @@
   },
   "8.7.*": {
     "from": "8.7.*",
-    "to": "8.8.0",
+    "to": "8.8.*",
     "composer-project-json-url": "latest"
   },
   "8.8.*": {
     "from": "8.8.*",
-    "to": "8.8.0",
+    "to": "8.8.*",
     "composer-project-json-url": "latest"
   }
 }
