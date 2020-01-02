@@ -3,11 +3,13 @@
   "package": "vardot/varbase",
   "8.4.*": {
     "from": "8.4.*",
-    "to": "8.4.28"
+    "to": "8.4.28",
+    "composer-project-json-url": "8.4.28"
   },
   "8.4.28": {
     "from": "8.4.28",
     "to": "8.6.3",
+    "composer-project-json-url": "8.6.3",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
@@ -29,11 +31,13 @@
   },
   "8.5.*": {
     "from": "8.5.*",
-    "to": "8.5.5"
+    "to": "8.5.5",
+    "composer-project-json-url": "8.5.5"
   },
   "8.5.5": {
     "from": "8.5.5",
     "to": "8.6.3",
+    "composer-project-json-url": "8.6.3",
     "packages": {
       "crucial": {
         "drupal/varbase_carousels": "6.0",
@@ -55,23 +59,25 @@
   },
   "8.6.*": {
     "from": "8.6.*",
-    "to": "8.6.13"
+    "to": "8.6.13",
+    "composer-project-json-url": "8.6.13"
   },
   "8.6.13": {
     "from": "8.6.13",
     "to": "8.7.1",
+    "composer-project-json-url": "8.7.1",
     "skip":[
       "media_entity_googledocs"
     ]
   },
   "8.7.*": {
     "from": "8.7.*",
-    "to": "8.8.1",
+    "to": "8.8.0",
     "composer-project-json-url": "latest"
   },
   "8.8.*": {
     "from": "8.8.*",
-    "to": "8.8.*",
+    "to": "8.8.0",
     "composer-project-json-url": "latest"
   }
 }
