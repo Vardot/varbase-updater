@@ -261,46 +261,6 @@ class RefactorComposerCommand extends BaseCommand {
 
     foreach ($updateConfig as $key => $conf) {
 
-      if (isset($conf["composer-project-json-url"])) {
-        if ($conf["composer-project-json-url"] == 'latest') {
-
-          // Get the latest release for Varbase project.
-          $varbaseProjectTargetRelease = [];
-          $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
-          $varbaseProjectTargetFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
-          $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename);
-
-          if (file_exists($varbaseProjectTargetFilename)) {
-            $varbaseProjectTargetRelease = JsonFile::parseJson(file_get_contents($varbaseProjectTargetFilename), $varbaseProjectTargetFilename);
-          }
-
-          // Varbase Project Latest release tag name.
-          $tagName = $varbaseProjectTargetRelease[0]['name'];
-
-          $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $tagName . "/composer.json";
-        }
-        else {
-          $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $conf["composer-project-json-url"] . "/composer.json";
-        }
-      }
-      elseif (isset($conf['to'])) {
-        $tagNameInTo = str_replace("*","0", $conf['to']);
-        $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $tagNameInTo . "/composer.json";
-      }
-
-      $filename = uniqid(sys_get_temp_dir().'/') . ".json";
-      $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
-      $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
-
-      if (file_exists($filename)) {
-        $latestProjectJsonConfig = JsonFile::parseJson(file_get_contents($filename), $filename);
-        $config = new Config();
-        $config->merge($latestProjectJsonConfig);
-        $rootLoader = new RootPackageLoader($repositoryManager, $config);
-        $latestProjectJsonPackage = $rootLoader->load($latestProjectJsonConfig);
-      }
-
-
       if (isset($conf["from"]) && isset($conf["to"])) {
         $conf["from"] = preg_replace("/\*/", ".*", $conf["from"]);
         $conf["to"] = preg_replace("/\*/", ".*", $conf["to"]);
@@ -317,6 +277,46 @@ class RefactorComposerCommand extends BaseCommand {
         }
 
         if (preg_match('/' . $conf["from"] . '/', $profileVersion)) {
+          
+          if (isset($conf["composer-project-json-url"])) {
+
+            if ($conf["composer-project-json-url"] == 'latest') {
+
+              // Get the latest release for Varbase project.
+              $varbaseProjectTargetRelease = [];
+              $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
+              $varbaseProjectTargetFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
+              $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename);
+
+              if (file_exists($varbaseProjectTargetFilename)) {
+                $varbaseProjectTargetRelease = JsonFile::parseJson(file_get_contents($varbaseProjectTargetFilename), $varbaseProjectTargetFilename);
+              }
+
+              // Varbase Project Latest release tag name.
+              $tagName = $varbaseProjectTargetRelease[0]['name'];
+
+              $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $tagName . "/composer.json";
+            }
+            else {
+              $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $conf["composer-project-json-url"] . "/composer.json";
+            }
+          }
+          elseif (isset($conf['to'])) {
+            $tagNameInTo = str_replace("*","0", $conf['to']);
+            $composerProjectJsonUrl = "https://raw.githubusercontent.com/vardot/varbase-project/" . $tagNameInTo . "/composer.json";
+          }
+
+          $filename = uniqid(sys_get_temp_dir().'/') . ".json";
+          $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
+          $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
+
+          if (file_exists($filename)) {
+            $latestProjectJsonConfig = JsonFile::parseJson(file_get_contents($filename), $filename);
+            $config = new Config();
+            $config->merge($latestProjectJsonConfig);
+            $rootLoader = new RootPackageLoader($repositoryManager, $config);
+            $latestProjectJsonPackage = $rootLoader->load($latestProjectJsonConfig);
+          }
           
           $profileLinkConstraint = new Constraint(">=", $conf["to"]);
           $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
