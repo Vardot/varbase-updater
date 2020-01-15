@@ -118,7 +118,7 @@ function get_file($url, $newfilename) {
   // Get the latest release for Varbase Updater.
   $varbaseUpdaterLatestRelease = [];
   $varbaseUpdaterJsonUrl = "https://api.github.com/repos/vardot/varbase-updater/tags";
-  $varbaseUpdaterFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
+  $varbaseUpdaterFilename = tempnam(sys_get_temp_dir(), 'json');
   get_file($varbaseUpdaterJsonUrl, $varbaseUpdaterFilename);
 
   if (file_exists($varbaseUpdaterFilename)) {

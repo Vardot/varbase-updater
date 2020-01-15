@@ -285,7 +285,7 @@ class RefactorComposerCommand extends BaseCommand {
               // Get the latest release for Varbase project.
               $varbaseProjectTargetRelease = [];
               $varbaseProjectTargetJsonUrl = "https://api.github.com/repos/Vardot/varbase-project/tags";
-              $varbaseProjectTargetFilename = sys_get_temp_dir() . '/' .uniqid(mt_rand(), true) . '.json';
+              $varbaseProjectTargetFilename = tempnam(sys_get_temp_dir(), 'json');
               $this->getFileFromURL($varbaseProjectTargetJsonUrl, $varbaseProjectTargetFilename);
 
               if (file_exists($varbaseProjectTargetFilename)) {
@@ -643,7 +643,7 @@ class RefactorComposerCommand extends BaseCommand {
 
     $ch = curl_init();
 
-  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; Vardot/varbase-updater/1.0; +https://github.com/Vardot/varbase-updater)');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; Vardot/varbase-updater/1.0; +https://github.com/Vardot/varbase-updater)');
     curl_setopt($ch, CURLOPT_FILE, $out);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
