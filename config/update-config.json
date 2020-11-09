@@ -70,10 +70,38 @@
       "media_entity_googledocs"
     ]
   },
-  "8.7.*": {
+ "8.7.*": {
     "from": "8.7.*",
-    "to": "8.8.*",
-    "composer-project-json-url": "latest"
+    "to": "8.8.4",
+    "composer-project-json-url": "8.8.4"
+  },
+  "8.8.*": {
+    "from": "8.8.*",
+    "to": "8.8.5",
+    "composer-project-json-url": "8.8.5",
+    "skip":[
+      "slick_media"
+    ]
+  },
+  "8.8.5": {
+    "from": "8.8.5",
+    "to": "8.8.6",
+    "composer-project-json-url": "8.8.6"
+  },
+  "8.8.6": {
+    "from": "8.8.6",
+    "to": "8.8.7",
+    "composer-project-json-url": "8.8.7",
+    "skip":[
+      "event_log_track",
+      "event_log_track_auth",
+      "event_log_track_file",
+      "event_log_track_media",
+      "event_log_track_menu",
+      "event_log_track_node",
+      "event_log_track_taxonomy",
+      "event_log_track_user"
+    ]
   },
   "8.8.*": {
     "from": "8.8.*",
