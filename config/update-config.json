@@ -102,10 +102,5 @@
       "event_log_track_taxonomy",
       "event_log_track_user"
     ]
-  },
-  "8.8.*": {
-    "from": "8.8.*",
-    "to": "8.8.*",
-    "composer-project-json-url": "latest"
   }
 }
