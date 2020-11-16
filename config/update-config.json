@@ -110,7 +110,7 @@
   },
   "8.8.7": {
     "from": "8.8.7",
-    "to": "latest",
-    "composer-project-json-url": "latest"
+    "to": "8.8.7",
+    "composer-project-json-url": "8.8.7"
   }
 }
