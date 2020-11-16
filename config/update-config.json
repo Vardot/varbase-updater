@@ -75,8 +75,18 @@
     "to": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
-  "8.8.*": {
-    "from": "8.8.*",
+  "8.8.1": {
+    "from": "8.8.1",
+    "to": "8.8.4",
+    "composer-project-json-url": "8.8.4"
+  },
+  "8.8.2": {
+    "from": "8.8.2",
+    "to": "8.8.4",
+    "composer-project-json-url": "8.8.4"
+  },
+  "8.8.3": {
+    "from": "8.8.3",
     "to": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
@@ -108,9 +118,9 @@
       "event_log_track_user"
     ]
   },
-  "8.8.7": {
-    "from": "8.8.7",
-    "to": "8.8.7",
-    "composer-project-json-url": "8.8.7"
+  "8.8.*": {
+    "from": "8.8.*",
+    "to": "8.8.*",
+    "composer-project-json-url": "latest"
   }
 }
