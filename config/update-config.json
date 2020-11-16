@@ -76,7 +76,7 @@
     "composer-project-json-url": "8.8.4"
   },
   "8.8.*": {
-    "from": "8.8.0",
+    "from": "8.8.*",
     "to": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
