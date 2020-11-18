@@ -5,7 +5,7 @@
 BASEDIR=$(pwd);
 
 echo "$(tput setaf 2)Checking composer version and updating if needed:$(tput sgr 0)";
-composer self-update --1;
+composer self-update --2;
 echo "$(tput setaf 2)Checking varbase-updater version and updating if needed:$(tput sgr 0)";
 composer update vardot/varbase-updater;
 
