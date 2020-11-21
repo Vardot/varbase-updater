@@ -189,7 +189,7 @@ class RefactorComposerCommand extends BaseCommand {
     $projectPackage = $composer->getPackage();
     $projectPackageRequires = $projectPackage->getRequires();
     $projectPackageExtras = $projectPackage->getExtra();
-    $projectPackageRepos = $projectPackage->getRepositories();
+    $projectPackageRepos = $composer->getConfig()->getRepositories();
     $projectScripts = $projectPackage->getScripts();
     $projectPackagePatches = [];
     $continue = true;
