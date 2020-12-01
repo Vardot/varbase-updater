@@ -15,8 +15,8 @@
     "source": "https://github.com//vardot/varbase-updater"
   },
   "require": {
-    "composer-plugin-api": "~1.0",
-    "symfony/yaml": "~3.0"
+    "composer-plugin-api": "~1.0 || ~1.0",
+    "symfony/yaml": "~3.0 || ~4.0"
   },
   "scripts": {
     "update-varbase": "./bin/update-varbase.sh"
