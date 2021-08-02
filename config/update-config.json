@@ -125,22 +125,48 @@
   },
   "8.8.7": {
     "from": "8.8.7",
-    "to": "8.8.10",
-    "composer-project-json-url": "8.8.10"
+    "to": "8.8.11",
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.8": {
     "from": "8.8.8",
-    "to": "8.8.10",
-    "composer-project-json-url": "8.8.10"
+    "to": "8.8.11",
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.9": {
     "from": "8.8.9",
-    "to": "8.8.10",
-    "composer-project-json-url": "8.8.10"
+    "to": "8.8.11",
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.10": {
     "from": "8.8.10",
-    "to": "8.8.10",
-    "composer-project-json-url": "8.8.10"
+    "to": "8.8.11",
+    "composer-project-json-url": "8.8.11"
+  },
+  "8.8.11": {
+    "from": "8.8.11",
+    "to": "9.0.0",
+    "composer-project-json-url": "9.0.0",
+    "skip":[
+      "vartheme",
+      "vartheme_admin",
+      "adminimal_admin_toolbar",
+      "libraries",
+      "libraries_ui",
+      "smtp",
+      "media_library_theme_reset",
+      "color_field",
+      "features",
+      "l10n_client",
+      "tour_builder",
+      "webform_analysis",
+      "mail_edit"
+    ],
+    "enable-after-update":[
+      "bootstrap_styles",
+      "bootstrap_layout_builder",
+      "layout_builder_blocks", 
+      "section_library"
+    ]
   }
 }
