@@ -168,5 +168,10 @@
       "layout_builder_blocks", 
       "section_library"
     ]
+  },
+  "9.0.0": {
+    "from": "9.0.0",
+    "to": "9.0.0",
+    "composer-project-json-url": "9.0.0"
   }
 }
