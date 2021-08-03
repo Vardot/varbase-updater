@@ -96,6 +96,11 @@
     "from": "8.8.11",
     "to": "9.0.0",
     "composer-project-json-url": "9.0.0",
+    "packages": {
+      "crucial": {
+        "drupal/varbase_layout_builder": "9.0.0 as 10.0.3"
+      }
+    },
     "skip":[
       "vartheme",
       "vartheme_admin",
@@ -110,12 +115,6 @@
       "tour_builder",
       "webform_analysis",
       "mail_edit"
-    ],
-    "enable-after-update":[
-      "bootstrap_styles",
-      "bootstrap_layout_builder",
-      "layout_builder_blocks", 
-      "section_library"
     ]
   },
   "9.0.0": {
