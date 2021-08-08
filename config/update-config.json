@@ -73,62 +73,32 @@
   "8.7.*": {
     "from": "8.7.*",
     "to": "8.8.11",
-    "composer-project-json-url": "8.8.4",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.4"
   },
   "8.8.0": {
     "from": "8.8.0",
     "to": "8.8.4",
-    "composer-project-json-url": "8.8.4",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.4"
   },
   "8.8.1": {
     "from": "8.8.1",
     "to": "8.8.4",
-    "composer-project-json-url": "8.8.4",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.4"
   },
   "8.8.2": {
     "from": "8.8.2",
     "to": "8.8.4",
-    "composer-project-json-url": "8.8.4",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.4"
   },
   "8.8.3": {
     "from": "8.8.3",
     "to": "8.8.4",
-    "composer-project-json-url": "8.8.4",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.4"
   },
   "8.8.4": {
     "from": "8.8.4",
     "to": "8.8.5",
     "composer-project-json-url": "8.8.5",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    },
     "skip":[
       "slick_media"
     ]
@@ -136,22 +106,12 @@
   "8.8.5": {
     "from": "8.8.5",
     "to": "8.8.6",
-    "composer-project-json-url": "8.8.6",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.6"
   },
   "8.8.6": {
     "from": "8.8.6",
     "to": "8.8.7",
     "composer-project-json-url": "8.8.7",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    },
     "skip":[
       "event_log_track",
       "event_log_track_auth",
@@ -166,42 +126,22 @@
   "8.8.7": {
     "from": "8.8.7",
     "to": "8.8.11",
-    "composer-project-json-url": "8.8.11",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.8": {
     "from": "8.8.8",
     "to": "8.8.11",
-    "composer-project-json-url": "8.8.11",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.9": {
     "from": "8.8.9",
     "to": "8.8.11",
-    "composer-project-json-url": "8.8.11",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.10": {
     "from": "8.8.10",
     "to": "8.8.11",
-    "composer-project-json-url": "8.8.11",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "8.8.11"
   },
   "8.8.11": {
     "from": "8.8.11",
@@ -209,7 +149,6 @@
     "composer-project-json-url": "9.0.1",
     "packages": {
       "crucial": {
-        "drush/drush": "~10",
         "drupal/varbase_layout_builder": "~9.0"
       }
     },
@@ -232,12 +171,7 @@
   "9.0.0": {
     "from": "9.0.0",
     "to": "9.0.1",
-    "composer-project-json-url": "9.0.1",
-    "packages": {
-      "crucial": {
-        "drush/drush": "~10"
-      }
-    }
+    "composer-project-json-url": "9.0.1"
   },
   "9.0.1": {
     "from": "9.0.1",
