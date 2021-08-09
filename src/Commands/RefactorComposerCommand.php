@@ -319,8 +319,8 @@ class RefactorComposerCommand extends BaseCommand {
           }
           
           $profileLinkConstraint = new Constraint(">=", $conf["to"]);
-          $profileLinkConstraint->setPrettyString("~" . $conf["to"]);
-          $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", "~".$conf["to"]);
+          $profileLinkConstraint->setPrettyString($conf["final_target_version"]);
+          $profileLink = new Link($projectPackage->getName(), $updateConfig['package'], $profileLinkConstraint , "", $conf["final_target_version"]);
 
           $requiredPackageLinks = [];
           $requiredPackageLinks[$updateConfig['package']] = $profileLink;

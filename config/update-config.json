@@ -4,11 +4,13 @@
   "8.4.*": {
     "from": "8.4.*",
     "to": "8.4.28",
+    "final_target_version": "8.4.28",
     "composer-project-json-url": "8.4.28"
   },
   "8.4.28": {
     "from": "8.4.28",
     "to": "8.6.3",
+    "final_target_version": "8.6.3",
     "composer-project-json-url": "8.6.3",
     "packages": {
       "crucial": {
@@ -32,11 +34,13 @@
   "8.5.*": {
     "from": "8.5.*",
     "to": "8.5.5",
+    "final_target_version": "8.5.5",
     "composer-project-json-url": "8.5.5"
   },
   "8.5.5": {
     "from": "8.5.5",
     "to": "8.6.3",
+    "final_target_version": "8.6.3",
     "composer-project-json-url": "8.6.3",
     "packages": {
       "crucial": {
@@ -60,11 +64,13 @@
   "8.6.*": {
     "from": "8.6.*",
     "to": "8.6.13",
+    "final_target_version": "8.6.13",
     "composer-project-json-url": "8.6.13"
   },
   "8.6.13": {
     "from": "8.6.13",
     "to": "8.7.1",
+    "final_target_version": "8.7.1",
     "composer-project-json-url": "8.7.1",
     "skip":[
       "media_entity_googledocs"
@@ -72,32 +78,38 @@
   },
   "8.7.*": {
     "from": "8.7.*",
-    "to": "8.8.11",
+    "to": "8.8.4",
+    "final_target_version": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
   "8.8.0": {
     "from": "8.8.0",
     "to": "8.8.4",
+    "final_target_version": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
   "8.8.1": {
     "from": "8.8.1",
     "to": "8.8.4",
+    "final_target_version": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
   "8.8.2": {
     "from": "8.8.2",
     "to": "8.8.4",
+    "final_target_version": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
   "8.8.3": {
     "from": "8.8.3",
     "to": "8.8.4",
+    "final_target_version": "8.8.4",
     "composer-project-json-url": "8.8.4"
   },
   "8.8.4": {
     "from": "8.8.4",
     "to": "8.8.5",
+    "final_target_version": "8.8.5",
     "composer-project-json-url": "8.8.5",
     "skip":[
       "slick_media"
@@ -106,11 +118,13 @@
   "8.8.5": {
     "from": "8.8.5",
     "to": "8.8.6",
+    "final_target_version": "8.8.6",
     "composer-project-json-url": "8.8.6"
   },
   "8.8.6": {
     "from": "8.8.6",
     "to": "8.8.7",
+    "final_target_version": "8.8.7",
     "composer-project-json-url": "8.8.7",
     "skip":[
       "event_log_track",
@@ -126,26 +140,31 @@
   "8.8.7": {
     "from": "8.8.7",
     "to": "8.8.11",
+    "final_target_version": "~8.0",
     "composer-project-json-url": "8.8.11"
   },
   "8.8.8": {
     "from": "8.8.8",
     "to": "8.8.11",
+    "final_target_version": "~8.0",
     "composer-project-json-url": "8.8.11"
   },
   "8.8.9": {
     "from": "8.8.9",
     "to": "8.8.11",
+    "final_target_version": "~8.0",
     "composer-project-json-url": "8.8.11"
   },
   "8.8.10": {
     "from": "8.8.10",
     "to": "8.8.11",
+    "final_target_version": "~8.0",
     "composer-project-json-url": "8.8.11"
   },
   "8.8.11": {
     "from": "8.8.11",
     "to": "9.0.1",
+    "final_target_version": "~9.0",
     "composer-project-json-url": "9.0.1",
     "packages": {
       "crucial": {
@@ -171,11 +190,13 @@
   "9.0.0": {
     "from": "9.0.0",
     "to": "9.0.1",
+    "final_target_version": "~9.0",
     "composer-project-json-url": "9.0.1"
   },
   "9.0.1": {
     "from": "9.0.1",
     "to": "9.0.1",
+    "final_target_version": "~9.0",
     "composer-project-json-url": "9.0.1"
   }
 }
