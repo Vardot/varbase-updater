@@ -169,9 +169,9 @@
   },
   "8.8.12": {
     "from": "8.8.11",
-    "to": "9.0.1",
+    "to": "9.0.2",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.1",
+    "composer-project-json-url": "9.0.2",
     "packages": {
       "crucial": {
         "drupal/varbase_layout_builder": "~9.0"
@@ -195,14 +195,20 @@
   },
   "9.0.0": {
     "from": "9.0.0",
-    "to": "9.0.1",
+    "to": "9.0.2",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.1"
+    "composer-project-json-url": "9.0.2"
   },
   "9.0.1": {
     "from": "9.0.1",
-    "to": "9.0.1",
+    "to": "9.0.2",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.1"
+    "composer-project-json-url": "9.0.2"
+  },
+  "9.0.2": {
+    "from": "9.0.2",
+    "to": "9.0.2",
+    "final_target_version": "~9.0",
+    "composer-project-json-url": "9.0.2"
   }
 }
