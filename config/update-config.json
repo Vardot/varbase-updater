@@ -163,6 +163,12 @@
   },
   "8.8.11": {
     "from": "8.8.11",
+    "to": "8.8.12",
+    "final_target_version": "~8.0",
+    "composer-project-json-url": "8.8.12"
+  },
+  "8.8.12": {
+    "from": "8.8.12",
     "to": "9.0.3",
     "final_target_version": "~9.0",
     "composer-project-json-url": "9.0.3",
