@@ -53,10 +53,10 @@ class VersionCheckComposerCommand extends BaseCommand {
     try {
       $type = $input->getArgument('type');
       $this->getVersion($type);
-      return 1;
+      return 0;
     } catch (\Exception $e) {
       throw new \Exception('Version Check Composer Command: ' . $e->getMessage(), 0, $e);
-      return 0;
+      return $e->getCode();
     }
   }
 

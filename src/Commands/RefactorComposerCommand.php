@@ -58,10 +58,10 @@ class RefactorComposerCommand extends BaseCommand {
       $path = $input->getArgument('file');
       $drupalPath = $input->getArgument('drupal-path');
       $this->generate($path, $drupalPath);
-      return 1;
-    } catch (\Exception $e) {
-      throw new \Exception('Version Check Composer Command: ' . $e->getMessage(), 0, $e);
       return 0;
+    } catch (\Exception $e) {
+      throw new \Exception('Refactor Composer Command: ' . $e->getMessage(), 0, $e);
+      return $e->getCode();
     }
   }
 
