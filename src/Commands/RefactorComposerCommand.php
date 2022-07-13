@@ -53,10 +53,16 @@ class RefactorComposerCommand extends BaseCommand {
    * @param OutputInterface $output
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $output->writeln('Refactoring composer.json');
-    $path = $input->getArgument('file');
-    $drupalPath = $input->getArgument('drupal-path');
-    $this->generate($path, $drupalPath);
+    try {
+      $output->writeln('Refactoring composer.json');
+      $path = $input->getArgument('file');
+      $drupalPath = $input->getArgument('drupal-path');
+      $this->generate($path, $drupalPath);
+      return 1;
+    } catch (\Exception $e) {
+      throw new \Exception('Version Check Composer Command: ' . $e->getMessage(), 0, $e);
+      return 0;
+    }
   }
 
   /**

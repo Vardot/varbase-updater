@@ -50,8 +50,14 @@ class VersionCheckComposerCommand extends BaseCommand {
    * @param OutputInterface $output
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $type = $input->getArgument('type');
-    $this->getVersion($type);
+    try {
+      $type = $input->getArgument('type');
+      $this->getVersion($type);
+      return 1;
+    } catch (\Exception $e) {
+      throw new \Exception('Version Check Composer Command: ' . $e->getMessage(), 0, $e);
+      return 0;
+    }
   }
 
   /**

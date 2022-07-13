@@ -255,7 +255,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
 
     $io = $event->getIO();
     $composer = $event->getComposer();
-    $rootPackage = $event->getComposer()->getPackage();
+    $rootPackage = $composer->getPackage();
     $rootPackageExtras = $rootPackage->getExtra();
 
     $package = $event->getPackage();
@@ -306,7 +306,7 @@ class VarbaseUpdater implements PluginInterface, EventSubscriberInterface, Capab
       $command = call_user_func_array('sprintf', $args);
       $output = '';
 
-      //use --dry-run to check if patch applies to prevent partial patches same as --check in git apply
+      // Use --dry-run to check if patch applies to prevent partial patches same as --check in git apply.
       if ($executor->execute($command, $output) == 0) {
         $isApplied = true;
         break;
