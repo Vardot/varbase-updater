@@ -180,6 +180,16 @@ enable_after_update(){
   fi
 }
 
+add_git_safe_directories() {
+  if [ -d ${BASEDIR}/vendor/drupal/coder ]; then
+    git --version
+    GIT_IS_AVAILABLE=$?
+    if [ $GIT_IS_AVAILABLE -eq 0 ]; then
+      git config --global --add safe.directory ${BASEDIR}/vendor/drupal/coder
+    fi
+  fi
+}
+
 echo "$(tput setab 2)";
 composer varbase-version-check current-message;
 echo "$(tput sgr 0)";
@@ -234,6 +244,8 @@ elif [ "$answer" != "${answer#[YyUu]}" ] ; then
     echo -e "$(tput setaf 2)Backup snapshot skipped...$(tput sgr 0)";
     rm -rf ${BASEDIR}/update_backups;
   fi
+
+  add_git_safe_directories;
 
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)";
   echo -e "$(tput setaf 2)Preparing composer.json for Varbase updates...$(tput sgr 0)" >> ${ERRORLOG};
