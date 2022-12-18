@@ -92,22 +92,26 @@ class VersionHelper {
 
     foreach ($updateConfig as $key => $conf) {
       if (isset($conf["from"]) && isset($conf["to"])) {
-        $conf_from = preg_replace("/\*/", ".*", $conf["from"]);
-        $conf_to = preg_replace("/\*/", ".*", $conf["to"]);
+        $conf_from = preg_replace("/\*/", ".*", $conf["from"] ?: '');
+        $conf_to = preg_replace("/\*/", ".*", $conf["to"] ?: '');
 
         foreach ($latestVersions as $key => $value) {
-          if (preg_match('/' . $conf_to . '/', $key)) {
+          if (preg_match("/" . $conf_to . "/", $key ?? '')) {
             $conf_to = $key;
             break;
           }
         }
 
-        if ($conf_to == $conf_from
-          || preg_match('/' . $conf_to . '/', $profileVersion)) {
+        if ($conf_to == $conf_from) {
+          unset($versionInfo["next"]);
+          break;
+        }
+
+        if (preg_match("/" . $conf_to . "/", $profileVersion ?? '')) {
           continue;
         }
 
-        if (preg_match('/' . $conf_from . '/', $profileVersion)) {
+        if (preg_match("/" . $conf_from . "/", $profileVersion ?? '')) {
           $versionInfo["next"] = $conf_to;
         }
       }
