@@ -107,10 +107,6 @@ function get_file($url, $newfilename) {
     mkdir(getcwd().'/scripts/update', 0777, true);
   }
 
-  if (!file_exists(getcwd().'/drush')) {
-    mkdir(getcwd().'/drush', 0777, true);
-  }
-
   if (!file_exists(getcwd().'/bin')) {
     mkdir(getcwd().'/bin', 0777, true);
   }
@@ -133,15 +129,6 @@ function get_file($url, $newfilename) {
   get_file($base_path . "scripts/update/update-varbase.sh", getcwd().'/scripts/update/update-varbase.sh');
   get_file($base_path . "scripts/update/version-check.php", getcwd().'/scripts/update/version-check.php');
   get_file($base_path . "scripts/update/update-config.json", getcwd().'/scripts/update/update-config.json');
-
-  // Only download them if they don't exist.
-  if (!file_exists(getcwd().'/drush/policy.drush.inc')) {
-    get_file($base_path . "drush/policy.drush.inc", getcwd().'/drush/policy.drush.inc');
-  }
-
-  if (!file_exists(getcwd().'/drush/README.md')) {
-    get_file($base_path . "drush/README.md", getcwd().'/drush/README.md');
-  }
 
   chmod(getcwd().'/scripts/update/update-varbase.sh', 0755);
   chmod(getcwd().'/scripts/update/version-check.php', 0755);

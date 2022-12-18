@@ -12,7 +12,14 @@ DRUPALPATH='docroot';
 if [ -d "${BASEDIR}/web" ]; then
   DRUPALPATH='web';
 fi
+
+# Use the local Drush if it was insalled in the project.
+# If not in the local, use the global Drush in the system.
 DRUSH="drush";
+if [ -d "${BASEDIR}/vendor/drush/drush" ]; then
+  DRUSH="${BASEDIR}/vendor/drush/drush/drush";
+fi
+
 clear;
 echo "$(tput setaf 4)";
 cat << "EOF"
