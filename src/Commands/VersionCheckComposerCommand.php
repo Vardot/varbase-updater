@@ -228,7 +228,7 @@ class VersionCheckComposerCommand extends BaseCommand {
         print $versionInfo["current"];
       break;
       case "next":
-        if(isset($versionInfo['next'])){
+        if (isset($versionInfo['next'])) {
           print $versionInfo["next"];
         }
       break;
