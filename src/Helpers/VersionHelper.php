@@ -102,16 +102,13 @@ class VersionHelper {
           }
         }
 
-        if (preg_match('/' . $conf_to . '/', '/' . $conf_from . '/')) {
-          unset($versionInfo["next"]);
-        }
-
-        if (preg_match('/' . $conf_to . '/', $profileVersion)) {
+        if ($conf_to == $conf_from
+          || preg_match('/' . $conf_to . '/', $profileVersion)) {
           continue;
         }
 
         if (preg_match('/' . $conf_from . '/', $profileVersion)) {
-          $versionInfo["next"] = $profileVersion;
+          $versionInfo["next"] = $conf_to;
         }
       }
     }
