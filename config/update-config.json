@@ -237,20 +237,26 @@
   },
   "9.0.7": {
     "from": "9.0.7",
-    "to": "9.0.9",
+    "to": "9.0.10",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.9"
+    "composer-project-json-url": "9.0.10"
   },
   "9.0.8": {
     "from": "9.0.8",
-    "to": "9.0.9",
+    "to": "9.0.10",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.9"
+    "composer-project-json-url": "9.0.10"
   },
   "9.0.9": {
     "from": "9.0.9",
-    "to": "9.0.9",
+    "to": "9.0.10",
     "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.9"
+    "composer-project-json-url": "9.0.10"
+  },
+  "9.0.10": {
+    "from": "9.0.10",
+    "to": "9.0.10",
+    "final_target_version": "~9.0",
+    "composer-project-json-url": "9.0.10"
   }
 }
