@@ -14,41 +14,14 @@ class VersionHelper {
    * @return string|array
    */
   public static function getLatestVersionInfo($metaData) {
-    $tags = [];
     $latestTags = [];
-    $versionsArray = [];
-    if (isset($metaData["package"])) {
-      $versionsArray = $metaData["package"]["versions"];
-    }
-    else {
-      return $latestTags;
+    if (isset($metaData["packages"])
+      && isset($metaData["packages"])
+      && isset($metaData["packages"]["vardot/varbase"][0])) {
+
+      $latestTags = $metaData["packages"]["vardot/varbase"][0];
     }
 
-    if ($versionsArray && sizeof($versionsArray)) {
-      foreach ($versionsArray as $version => $meta) {
-        if (preg_match('/\d+\.\d+.\d+/', $version)) {
-          $numbers = [];
-          preg_match('/(\d+\.\d+).(\d+)/', $version, $numbers);
-          if (sizeof($numbers)) {
-            $major = $numbers[1];
-            $minor = $numbers[2];
-            if (isset($tags[$major])) {
-              if($tags[$major] < $minor) {
-                $tags[$major] = $minor;
-              }
-            }
-            else {
-              $tags[$major] = $minor;
-            }
-          }
-        }
-      }
-
-      foreach ($tags as $major => $minor) {
-        $latestTags[$major.".".$minor] = $major.".".$minor;
-      }
-
-    }
     return $latestTags;
   }
 
@@ -90,21 +63,24 @@ class VersionHelper {
       "current" => $profileVersion
     ];
 
-    foreach ($updateConfig as $key => $conf) {
+    foreach ($updateConfig['versions'] as $key => $conf) {
+
       if (isset($conf["from"]) && isset($conf["to"])) {
-        $conf_from = preg_replace("/\*/", ".*", $conf["from"] ?: '');
-        $conf_to = preg_replace("/\*/", ".*", $conf["to"] ?: '');
+
+        $conf_from = preg_replace("/\*/", ".*", $conf["from"]);
+        $conf_to = preg_replace("/\*/", ".*", $conf["to"]);
+
+        if (($conf_from == $conf_to)
+          && ($conf_from == $latestVersions['version'])
+          && ($latestVersions['version'] == $profileVersion)) {
+          unset($versionInfo["next"]);
+        }
 
         foreach ($latestVersions as $key => $value) {
           if (preg_match("/" . $conf_to . "/", $key ?? '')) {
             $conf_to = $key;
             break;
           }
-        }
-
-        if ($conf_to == $conf_from) {
-          unset($versionInfo["next"]);
-          break;
         }
 
         if (preg_match("/" . $conf_to . "/", $profileVersion ?? '')) {

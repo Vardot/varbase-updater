@@ -1,262 +1,264 @@
 {
   "profile": "varbase",
   "package": "vardot/varbase",
-  "8.4.*": {
-    "from": "8.4.*",
-    "to": "8.4.28",
-    "final_target_version": "8.4.28",
-    "composer-project-json-url": "8.4.28"
-  },
-  "8.4.28": {
-    "from": "8.4.28",
-    "to": "8.6.3",
-    "final_target_version": "8.6.3",
-    "composer-project-json-url": "8.6.3",
-    "packages": {
-      "crucial": {
-        "drupal/varbase_carousels": "6.0",
-        "drupal/entity_browser": "2.0",
-        "drupal/video_embed_field": "2.0",
-        "drupal/varbase_media": "6.2",
-        "drupal/media_entity": "2.0-beta3",
-        "vardot/entity_browser_generic_embed": "8.1.x-dev",
-        "drupal/panelizer": "4.1"
-      }
+  "versions": {
+    "8.4.*": {
+      "from": "8.4.*",
+      "to": "8.4.28",
+      "final_target_version": "8.4.28",
+      "composer-project-json-url": "8.4.28"
     },
-    "skip":[
-      "media_entity_document",
-      "media_entity_image"
-    ],
-    "enable-after-update":[
-      "entity_browser_generic_embed"
-    ]
-  },
-  "8.5.*": {
-    "from": "8.5.*",
-    "to": "8.5.5",
-    "final_target_version": "8.5.5",
-    "composer-project-json-url": "8.5.5"
-  },
-  "8.5.5": {
-    "from": "8.5.5",
-    "to": "8.6.3",
-    "final_target_version": "8.6.3",
-    "composer-project-json-url": "8.6.3",
-    "packages": {
-      "crucial": {
-        "drupal/varbase_carousels": "6.0",
-        "drupal/entity_browser": "2.0",
-        "drupal/video_embed_field": "2.0",
-        "drupal/varbase_media": "6.2",
-        "drupal/media_entity": "2.0-beta3",
-        "vardot/entity_browser_generic_embed": "8.1.x-dev",
-        "drupal/panelizer": "4.1"
-      }
+    "8.4.28": {
+      "from": "8.4.28",
+      "to": "8.6.3",
+      "final_target_version": "8.6.3",
+      "composer-project-json-url": "8.6.3",
+      "packages": {
+        "crucial": {
+          "drupal/varbase_carousels": "6.0",
+          "drupal/entity_browser": "2.0",
+          "drupal/video_embed_field": "2.0",
+          "drupal/varbase_media": "6.2",
+          "drupal/media_entity": "2.0-beta3",
+          "vardot/entity_browser_generic_embed": "8.1.x-dev",
+          "drupal/panelizer": "4.1"
+        }
+      },
+      "skip":[
+        "media_entity_document",
+        "media_entity_image"
+      ],
+      "enable-after-update":[
+        "entity_browser_generic_embed"
+      ]
     },
-    "skip":[
-      "media_entity_document",
-      "media_entity_image"
-    ],
-    "enable-after-update":[
-      "entity_browser_generic_embed"
-    ]
-  },
-  "8.6.*": {
-    "from": "8.6.*",
-    "to": "8.6.13",
-    "final_target_version": "8.6.13",
-    "composer-project-json-url": "8.6.13"
-  },
-  "8.6.13": {
-    "from": "8.6.13",
-    "to": "8.7.1",
-    "final_target_version": "8.7.1",
-    "composer-project-json-url": "8.7.1",
-    "skip":[
-      "media_entity_googledocs"
-    ]
-  },
-  "8.7.*": {
-    "from": "8.7.*",
-    "to": "8.8.4",
-    "final_target_version": "8.8.4",
-    "composer-project-json-url": "8.8.4"
-  },
-  "8.8.0": {
-    "from": "8.8.0",
-    "to": "8.8.4",
-    "final_target_version": "8.8.4",
-    "composer-project-json-url": "8.8.4"
-  },
-  "8.8.1": {
-    "from": "8.8.1",
-    "to": "8.8.4",
-    "final_target_version": "8.8.4",
-    "composer-project-json-url": "8.8.4"
-  },
-  "8.8.2": {
-    "from": "8.8.2",
-    "to": "8.8.4",
-    "final_target_version": "8.8.4",
-    "composer-project-json-url": "8.8.4"
-  },
-  "8.8.3": {
-    "from": "8.8.3",
-    "to": "8.8.4",
-    "final_target_version": "8.8.4",
-    "composer-project-json-url": "8.8.4"
-  },
-  "8.8.4": {
-    "from": "8.8.4",
-    "to": "8.8.5",
-    "final_target_version": "8.8.5",
-    "composer-project-json-url": "8.8.5",
-    "skip":[
-      "slick_media"
-    ]
-  },
-  "8.8.5": {
-    "from": "8.8.5",
-    "to": "8.8.6",
-    "final_target_version": "8.8.6",
-    "composer-project-json-url": "8.8.6"
-  },
-  "8.8.6": {
-    "from": "8.8.6",
-    "to": "8.8.7",
-    "final_target_version": "8.8.7",
-    "composer-project-json-url": "8.8.7",
-    "skip":[
-      "event_log_track",
-      "event_log_track_auth",
-      "event_log_track_file",
-      "event_log_track_media",
-      "event_log_track_menu",
-      "event_log_track_node",
-      "event_log_track_taxonomy",
-      "event_log_track_user"
-    ]
-  },
-  "8.8.7": {
-    "from": "8.8.7",
-    "to": "8.8.11",
-    "final_target_version": "~8.0",
-    "composer-project-json-url": "8.8.11"
-  },
-  "8.8.8": {
-    "from": "8.8.8",
-    "to": "8.8.11",
-    "final_target_version": "~8.0",
-    "composer-project-json-url": "8.8.11"
-  },
-  "8.8.9": {
-    "from": "8.8.9",
-    "to": "8.8.11",
-    "final_target_version": "~8.0",
-    "composer-project-json-url": "8.8.11"
-  },
-  "8.8.10": {
-    "from": "8.8.10",
-    "to": "8.8.11",
-    "final_target_version": "~8.0",
-    "composer-project-json-url": "8.8.11"
-  },
-  "8.8.11": {
-    "from": "8.8.11",
-    "to": "8.8.12",
-    "final_target_version": "~8.0",
-    "composer-project-json-url": "8.8.12"
-  },
-  "8.8.12": {
-    "from": "8.8.12",
-    "to": "9.0.3",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.3",
-    "packages": {
-      "crucial": {
-        "drupal/varbase_layout_builder": "~9.0"
-      }
+    "8.5.*": {
+      "from": "8.5.*",
+      "to": "8.5.5",
+      "final_target_version": "8.5.5",
+      "composer-project-json-url": "8.5.5"
     },
-    "skip":[
-      "vartheme",
-      "vartheme_admin",
-      "adminimal_admin_toolbar",
-      "libraries",
-      "libraries_ui",
-      "smtp",
-      "media_library_theme_reset",
-      "color_field",
-      "features",
-      "l10n_client",
-      "tour_builder",
-      "webform_analysis",
-      "mail_edit"
-    ]
-  },
-  "9.0.0": {
-    "from": "9.0.0",
-    "to": "9.0.3",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.3"
-  },
-  "9.0.1": {
-    "from": "9.0.1",
-    "to": "9.0.3",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.3"
-  },
-  "9.0.2": {
-    "from": "9.0.2",
-    "to": "9.0.3",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.3"
-  },
-  "9.0.3": {
-    "from": "9.0.3",
-    "to": "9.0.4",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.4"
-  },
-  "9.0.4": {
-    "from": "9.0.4",
-    "to": "9.0.6",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.6"
-  },
-  "9.0.5": {
-    "from": "9.0.5",
-    "to": "9.0.6",
-    "final_target_version": "~9.0.0",
-    "composer-project-json-url": "9.0.6"
-  },
-  "9.0.6": {
-    "from": "9.0.6",
-    "to": "9.0.7",
-    "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.7"
-  },
-  "9.0.7": {
-    "from": "9.0.7",
-    "to": "9.0.10",
-    "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.10"
-  },
-  "9.0.8": {
-    "from": "9.0.8",
-    "to": "9.0.10",
-    "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.10"
-  },
-  "9.0.9": {
-    "from": "9.0.9",
-    "to": "9.0.10",
-    "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.10"
-  },
-  "9.0.10": {
-    "from": "9.0.10",
-    "to": "9.0.10",
-    "final_target_version": "~9.0",
-    "composer-project-json-url": "9.0.10"
+    "8.5.5": {
+      "from": "8.5.5",
+      "to": "8.6.3",
+      "final_target_version": "8.6.3",
+      "composer-project-json-url": "8.6.3",
+      "packages": {
+        "crucial": {
+          "drupal/varbase_carousels": "6.0",
+          "drupal/entity_browser": "2.0",
+          "drupal/video_embed_field": "2.0",
+          "drupal/varbase_media": "6.2",
+          "drupal/media_entity": "2.0-beta3",
+          "vardot/entity_browser_generic_embed": "8.1.x-dev",
+          "drupal/panelizer": "4.1"
+        }
+      },
+      "skip":[
+        "media_entity_document",
+        "media_entity_image"
+      ],
+      "enable-after-update":[
+        "entity_browser_generic_embed"
+      ]
+    },
+    "8.6.*": {
+      "from": "8.6.*",
+      "to": "8.6.13",
+      "final_target_version": "8.6.13",
+      "composer-project-json-url": "8.6.13"
+    },
+    "8.6.13": {
+      "from": "8.6.13",
+      "to": "8.7.1",
+      "final_target_version": "8.7.1",
+      "composer-project-json-url": "8.7.1",
+      "skip":[
+        "media_entity_googledocs"
+      ]
+    },
+    "8.7.*": {
+      "from": "8.7.*",
+      "to": "8.8.4",
+      "final_target_version": "8.8.4",
+      "composer-project-json-url": "8.8.4"
+    },
+    "8.8.0": {
+      "from": "8.8.0",
+      "to": "8.8.4",
+      "final_target_version": "8.8.4",
+      "composer-project-json-url": "8.8.4"
+    },
+    "8.8.1": {
+      "from": "8.8.1",
+      "to": "8.8.4",
+      "final_target_version": "8.8.4",
+      "composer-project-json-url": "8.8.4"
+    },
+    "8.8.2": {
+      "from": "8.8.2",
+      "to": "8.8.4",
+      "final_target_version": "8.8.4",
+      "composer-project-json-url": "8.8.4"
+    },
+    "8.8.3": {
+      "from": "8.8.3",
+      "to": "8.8.4",
+      "final_target_version": "8.8.4",
+      "composer-project-json-url": "8.8.4"
+    },
+    "8.8.4": {
+      "from": "8.8.4",
+      "to": "8.8.5",
+      "final_target_version": "8.8.5",
+      "composer-project-json-url": "8.8.5",
+      "skip":[
+        "slick_media"
+      ]
+    },
+    "8.8.5": {
+      "from": "8.8.5",
+      "to": "8.8.6",
+      "final_target_version": "8.8.6",
+      "composer-project-json-url": "8.8.6"
+    },
+    "8.8.6": {
+      "from": "8.8.6",
+      "to": "8.8.7",
+      "final_target_version": "8.8.7",
+      "composer-project-json-url": "8.8.7",
+      "skip":[
+        "event_log_track",
+        "event_log_track_auth",
+        "event_log_track_file",
+        "event_log_track_media",
+        "event_log_track_menu",
+        "event_log_track_node",
+        "event_log_track_taxonomy",
+        "event_log_track_user"
+      ]
+    },
+    "8.8.7": {
+      "from": "8.8.7",
+      "to": "8.8.11",
+      "final_target_version": "~8.0",
+      "composer-project-json-url": "8.8.11"
+    },
+    "8.8.8": {
+      "from": "8.8.8",
+      "to": "8.8.11",
+      "final_target_version": "~8.0",
+      "composer-project-json-url": "8.8.11"
+    },
+    "8.8.9": {
+      "from": "8.8.9",
+      "to": "8.8.11",
+      "final_target_version": "~8.0",
+      "composer-project-json-url": "8.8.11"
+    },
+    "8.8.10": {
+      "from": "8.8.10",
+      "to": "8.8.11",
+      "final_target_version": "~8.0",
+      "composer-project-json-url": "8.8.11"
+    },
+    "8.8.11": {
+      "from": "8.8.11",
+      "to": "8.8.12",
+      "final_target_version": "~8.0",
+      "composer-project-json-url": "8.8.12"
+    },
+    "8.8.12": {
+      "from": "8.8.12",
+      "to": "9.0.3",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.3",
+      "packages": {
+        "crucial": {
+          "drupal/varbase_layout_builder": "~9.0"
+        }
+      },
+      "skip":[
+        "vartheme",
+        "vartheme_admin",
+        "adminimal_admin_toolbar",
+        "libraries",
+        "libraries_ui",
+        "smtp",
+        "media_library_theme_reset",
+        "color_field",
+        "features",
+        "l10n_client",
+        "tour_builder",
+        "webform_analysis",
+        "mail_edit"
+      ]
+    },
+    "9.0.0": {
+      "from": "9.0.0",
+      "to": "9.0.3",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.3"
+    },
+    "9.0.1": {
+      "from": "9.0.1",
+      "to": "9.0.3",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.3"
+    },
+    "9.0.2": {
+      "from": "9.0.2",
+      "to": "9.0.3",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.3"
+    },
+    "9.0.3": {
+      "from": "9.0.3",
+      "to": "9.0.4",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.4"
+    },
+    "9.0.4": {
+      "from": "9.0.4",
+      "to": "9.0.6",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.6"
+    },
+    "9.0.5": {
+      "from": "9.0.5",
+      "to": "9.0.6",
+      "final_target_version": "~9.0.0",
+      "composer-project-json-url": "9.0.6"
+    },
+    "9.0.6": {
+      "from": "9.0.6",
+      "to": "9.0.7",
+      "final_target_version": "~9.0",
+      "composer-project-json-url": "9.0.7"
+    },
+    "9.0.7": {
+      "from": "9.0.7",
+      "to": "9.0.10",
+      "final_target_version": "~9.0",
+      "composer-project-json-url": "9.0.10"
+    },
+    "9.0.8": {
+      "from": "9.0.8",
+      "to": "9.0.10",
+      "final_target_version": "~9.0",
+      "composer-project-json-url": "9.0.10"
+    },
+    "9.0.9": {
+      "from": "9.0.9",
+      "to": "9.0.10",
+      "final_target_version": "~9.0",
+      "composer-project-json-url": "9.0.10"
+    },
+    "9.0.10": {
+      "from": "9.0.10",
+      "to": "9.0.10",
+      "final_target_version": "~9.0",
+      "composer-project-json-url": "9.0.10"
+    }
   }
 }

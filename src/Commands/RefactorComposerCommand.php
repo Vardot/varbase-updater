@@ -214,9 +214,10 @@ class RefactorComposerCommand extends BaseCommand {
     $updateConfig = array_replace_recursive($updateConfig, $extraConfig);
 
     $varbaseMetaData = [];
-    $composerProjectJsonUrl = "https://packagist.org/packages/vardot/varbase.json";
+    $composerProjectJsonUrl = "https://repo.packagist.org/p2/vardot/varbase.json";
     $filename = uniqid(sys_get_temp_dir().'/') . ".json";
     $hostname = parse_url($composerProjectJsonUrl, PHP_URL_HOST);
+
     $downloader->copy($hostname, $composerProjectJsonUrl, $filename, FALSE);
 
     if (file_exists($filename)) {
@@ -265,24 +266,30 @@ class RefactorComposerCommand extends BaseCommand {
     $scripts = [];
 
 
-    foreach ($updateConfig as $key => $conf) {
+    foreach ($updateConfig['versions'] as $key => $conf) {
 
       if (isset($conf["from"]) && isset($conf["to"])) {
         $conf["from"] = preg_replace("/\*/", ".*", $conf["from"]);
         $conf["to"] = preg_replace("/\*/", ".*", $conf["to"]);
 
+        if (($conf["from"] == $conf['to'])
+          && ($conf["from"] == $latestTags['version'])
+          && ($latestTags['version'] == $profileVersion)) {
+          continue;
+        }
+
         foreach($latestTags as $key => $value){
-          if(preg_match('/' . $conf['to'] . '/', $key)){
+          if(preg_match('/' . $conf['to'] . '/', $key ?? '')){
             $conf["to"] = $key;
             break;
           }
         }
 
-        if (preg_match('/' . $conf['to'] . '/', $profileVersion)) {
+        if (preg_match('/' . $conf['to'] . '/', $profileVersion ?? '')) {
           continue;
         }
 
-        if (preg_match('/' . $conf["from"] . '/', $profileVersion)) {
+        if (preg_match('/' . $conf["from"] . '/', $profileVersion ?? '')) {
           
           if (isset($conf["composer-project-json-url"])) {
 
