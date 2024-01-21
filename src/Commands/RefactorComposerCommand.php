@@ -446,6 +446,18 @@ class RefactorComposerCommand extends BaseCommand {
       if (!isset($pluginConfig['version'])) {
         $pluginConfig['version'] = "0.0.0";
       }
+      // Try to save botched drupal module composer files that might have been
+      // downloaded via git e.g.
+      // https://git.drupalcode.org/project/jquery_ui_accordion/-/blob/77d899f0b4f860435088c3ab18fb6d25b2fde39c/composer.json
+      // Check if in the related folder a .info.yml file with the expected name
+      // exists - if so use it as name as it should match drupal.org naming.
+      if (
+        !isset($pluginConfig['name'])
+        && ($moduleName = basename(dirname($file)))
+        && file_exists(dirname($file) . DIRECTORY_SEPARATOR . $moduleName . '.info.yml')
+      ) {
+        $pluginConfig['name'] = 'drupal/' . $moduleName;
+      }
       $pluginConfig = JsonFile::encode($pluginConfig);
       $pluginPackage = $loader->load($pluginConfig);
       $pluginPackageRequires = $pluginPackage->getRequires();
@@ -464,6 +476,18 @@ class RefactorComposerCommand extends BaseCommand {
       $pluginConfig = JsonFile::parseJson(file_get_contents($file), $file);
       if (!isset($pluginConfig['version'])) {
         $pluginConfig['version'] = "0.0.0";
+      }
+      // Try to save botched drupal theme composer files that might have been
+      // downloaded via git e.g.
+      // https://git.drupalcode.org/project/jquery_ui_accordion/-/blob/77d899f0b4f860435088c3ab18fb6d25b2fde39c/composer.json
+      // Check if in the related folder a .info.yml file with the expected name
+      // exists - if so use it as name as it should match drupal.org naming.
+      if (
+        !isset($pluginConfig['name'])
+        && ($moduleName = basename(dirname($file)))
+        && file_exists(dirname($file) . DIRECTORY_SEPARATOR . $moduleName . '.info.yml')
+      ) {
+        $pluginConfig['name'] = 'drupal/' . $moduleName;
       }
       $pluginConfig = JsonFile::encode($pluginConfig);
       $pluginPackage = $loader->load($pluginConfig);
