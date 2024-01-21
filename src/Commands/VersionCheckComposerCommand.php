@@ -218,11 +218,9 @@ class VersionCheckComposerCommand extends BaseCommand {
     switch ($type) {
       case "composer-patches":
         if (!defined('cweagans\Composer\PatchEvents::PATCH_APPLY_ERROR')) {
-          exit(1);
+          print "You are using cweagans\composer-patches 1.x - unable to auto-handle patching failures.\n";
         }
-        else {
-          exit(0);
-        }
+        exit(0);
       break;
       case "current":
         print $versionInfo["current"];
