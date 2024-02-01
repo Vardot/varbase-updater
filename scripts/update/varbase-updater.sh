@@ -217,7 +217,7 @@ clear_stdin;
 if [ -d ${BASEDIR}/update_backups ]; then
   echo -e "$(tput setaf 1)What would you like to do?: $(tput sgr 0)";
   echo -e "$(tput setaf 1)- (u|update) To start the update process (default). $(tput sgr 0)"
-  echo -e "$(tput setaf 1)- (r|revert) To revert the previews backup.$(tput sgr 0)";
+  echo -e "$(tput setaf 1)- (r|revert) To revert the previous backup.$(tput sgr 0)";
   echo -e "$(tput setaf 1)- (e|exit) To exit.$(tput sgr 0)";
 else
   echo -e "$(tput setaf 1)Do you want to start the update process? (yes): $(tput sgr 0)";
