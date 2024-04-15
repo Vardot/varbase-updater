@@ -316,9 +316,15 @@
     },
     "9.1.1": {
       "from": "9.1.1",
-      "to": "9.1.1",
+      "to": "9.1.2",
       "final_target_version": "~9.1.0",
-      "composer-project-json-url": "9.1.1"
+      "composer-project-json-url": "9.1.2"
+    },
+    "9.1.2": {
+      "from": "9.1.2",
+      "to": "9.1.2",
+      "final_target_version": "~9.1.0",
+      "composer-project-json-url": "9.1.2"
     }
   }
 }
