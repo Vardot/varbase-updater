@@ -334,15 +334,21 @@
     },
     "9.1.3": {
       "from": "9.1.3",
-      "to": "9.1.4",
+      "to": "9.1.5",
       "final_target_version": "~9.1.0",
-      "composer-project-json-url": "9.1.4"
+      "composer-project-json-url": "9.1.5"
     },
     "9.1.4": {
       "from": "9.1.4",
-      "to": "9.1.4",
+      "to": "9.1.5",
       "final_target_version": "~9.1.0",
-      "composer-project-json-url": "9.1.4"
+      "composer-project-json-url": "9.1.5"
+    },
+    "9.1.5": {
+      "from": "9.1.5",
+      "to": "9.1.5",
+      "final_target_version": "~9.1.0",
+      "composer-project-json-url": "9.1.5"
     }
   }
 }
